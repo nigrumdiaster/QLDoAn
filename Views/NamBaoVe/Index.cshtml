@@ -1,0 +1,314 @@
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<QLDoAn.Models.EF.Tbl_NamBaoVe>
+
+@{
+    ViewBag.Title = "Quản lý đợt bảo vệ";
+    ViewBag.Navbar = "Quản lý đợt bảo vệ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int dem = 1;
+}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            @if (TempData["add_success1"] != null)
+            {
+                <div class="alert alert-danger text-center" id="AlertBox">
+                    @TempData["add_success1"]
+                </div>
+            }
+            else if (@TempData["add_success"]!=null)
+            {
+                <div class="alert alert-success text-center" id="AlertBox">
+                    @TempData["add_success"]
+                </div>
+
+
+            }
+            else{
+            
+            
+            }
+        </div>
+        <div class="row">
+            <div class="col-md-4" style="margin-bottom: 10px">
+                <button class="btn btn-lg btn-primary" data-toggle="modal" data-target="#addNew">Thêm mới </button>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Thêm mới đợt bảo vệ</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @using (Html.BeginForm("Add", "NamBaoVe", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+
+
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Năm bảo vệ:</label>
+                                <input type="text" name="NamBaoVe" id="NamBaoVe1" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Đợt bảo vệ:</label>
+                                <input type="text" name="DotBaoVe" id="DotBaoVe1" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                                <button type="submit" id="btnAdd" class="btn btn-primary btn-lg">Thêm mới</button>
+                            </div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="blue">
+                        <i class="material-icons">list_alt</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">Danh sách đợt bảo vệ</h4>
+                        <div class="toolbar">
+                            <!--        Here you can write extra buttons/actions for the toolbar              -->
+                        </div>
+                        <div class="material-datatables">
+
+                            <table id="datatables2"
+                                   class="table table-striped display responsive table-no-bordered table-hover nowrap"
+                                   style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Năm bảo vệ</th>
+                                        <th>Đợt bảo vệ</th>
+                                        <th class="disabled-sorting"></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@dem</td>
+                                            <td>@item.NamBaoVe</td>
+                                            <td>@item.DotBaoVe</td>
+                                            <td class="td-actions">
+                                                <button type="button" rel="tooltip" data-id="@item.ID"
+                                                        class="btn btn-success btn-round btnEdit">
+                                                    <i class="material-icons">edit</i>
+                                                </button>
+                                                <button type="button" rel="tooltip"
+                                                        class="btn btn-danger btn-round btnDelete" data-id="@item.ID" title="Xóa đợt bảo vệ">
+                                                    <!-- Link on demo.js: warning-message-and-confirmation-6 -->
+                                                    <i class="material-icons">close</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        dem++;
+                                    }
+                                </tbody>
+
+
+                            </table>
+                            Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount
+                            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, pageSize = Model.PageSize }))
+                        </div>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade editNienKhoa" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Sửa hệ đào tạo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("Edit", "NamBaoVe", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <input type="hidden" name="ID" id="ID" />
+
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Năm bảo vệ:</label>
+                        <input type="text" name="NamBaoVe" id="NamBaoVe" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Đợt bảo vệ:</label>
+                        <input type="text" name="DotBaoVe" id="DotBaoVe" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" id="btnEdit" class="btn btn-primary">Sửa</button>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var btnADD = document.getElementById("btnAdd").onclick = function () {
+        // Bước 1: Lấy giá trị của username và password
+
+        var DotBaoVe1 = document.getElementById('DotBaoVe1').value;
+        var NamBaoVe1 = document.getElementById('NamBaoVe1').value;
+
+
+
+
+
+
+
+        // Bước 2: Kiểm tra dữ liệu hợp lệ hay không
+        if (DotBaoVe1.trim() == '' | NamBaoVe1.trim() == ''
+
+
+        ) {
+
+            alert('Bạn hãy nhập đầy đủ thông tin');
+        }
+
+        else {
+            return true;
+        }
+
+        return false;
+
+    }
+
+
+
+
+
+
+</script>
+
+
+<script>
+    var edit = document.getElementById("btnEdit").onclick = function () {
+        // Bước 1: Lấy giá trị của username và password
+
+        var DotBaoVe = document.getElementById('DotBaoVe').value;
+        var NamBaoVe = document.getElementById('NamBaoVe').value;
+
+        // Bước 2: Kiểm tra dữ liệu hợp lệ hay không
+        if (NamBaoVe.trim() == '' | DotBaoVe.trim() == '') {
+
+            alert('Bạn hãy nhập đầy đủ thông tin');
+        }
+
+        else {
+            return true;
+        }
+
+        return false;
+
+    }
+</script>
+
+
+@section jsScript{
+
+    <script>
+        $(document).ready(function () {
+            //nếu không có thao tác gì thì ẩn đi
+            $('#AlertBox').removeClass('hide');
+
+            //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+            $('#AlertBox').delay(2000).slideUp(500);
+
+            $('.btnDelete').off('click').on('click', function () {
+                const notice = PNotify.notice({
+                    title: 'Thông báo',
+                    text: 'Bạn thật sự muốn xóa?',
+                    icon: 'fa fa-question-circle',
+                    width: '360px',
+                    minHeight: '110px',
+                    hide: false,
+                    closer: false,
+                    sticker: false,
+                    destroy: true,
+                    stack: new PNotify.Stack({
+                        dir1: 'down',
+                        modal: true,
+                        firstpos1: 25,
+                        overlayClose: false
+                    }),
+                    modules: new Map([
+                        ...PNotify.defaultModules,
+                        [PNotifyConfirm, {
+                            confirm: true
+                        }]
+                    ])
+                });
+
+                notice.on('pnotify:confirm', () =>
+                    $.ajax({
+                        data: { ID: $(this).data('id') },
+                        url: '/NamBaoVe/Delete',
+                        dataType: 'Json',
+                        type: 'POST',
+                        success: function (res) {
+                            if (res.status == true) {
+                                window.location.href = "/NamBaoVe";
+                                PNotify.success({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa đợt bảo vệ thành công.'
+                                });
+                            } else {
+                                PNotify.error({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa đợt bảo vệ KHÔNG thành công.'
+                                });
+                            }
+                        }
+                    })
+
+                );
+
+
+            });
+
+            $('.btnEdit').click(function (event) {
+                $('.editNienKhoa').modal('show');
+                //alert($(this).data('id'));
+                var ID = $(this).data('id');
+                $.ajax({
+                    url: "/NamBaoVe/GetByID/" + ID,
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (res) {
+                        $('#DotBaoVe').val(res.DotBaoVe);
+                        $('#NamBaoVe').val(res.NamBaoVe);
+                        $('#ID').val(res.ID);
+                    }
+                });
+            });
+        });
+    </script>
+
+}
+

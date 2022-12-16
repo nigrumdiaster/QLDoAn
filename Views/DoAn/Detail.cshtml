@@ -1,0 +1,427 @@
+﻿@using QLDoAn.Models.EF;
+@{
+    var doan = ViewBag.DoAn as Tbl_DoAn;
+    ViewBag.Title = "Quản lý đồ án";
+    ViewBag.Navbar = "Chi tiết đồ án: " + doan.TenDoAn;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int dem_1 = 1, dem_2 = 1, dem_3 = 1, dem_4 = 1;
+    var lstChuyenNganh = ViewBag.ChuyenNganh as List<Tbl_ChuyenNganh>;
+    var lstKhoa = ViewBag.Khoa as List<Tbl_Khoa>;
+
+    var lstThamGia = ViewBag.ThamGia as List<Tbl_ThamGia>;
+    var lstGVHD = ViewBag.GVHD as List<QLDoAn.Models.DTO.GiaoVienDTO>;
+    var huongnc = ViewBag.HuongNC as List<Tbl_GVHD>;
+    var lstHDC = ViewBag.HDC as List<QLDoAn.Models.DTO.GiaoVienDTO>;
+    var lstGVPB = ViewBag.GVPB as List<Tbl_HoiDong>;
+    var lstNamBV = ViewBag.NamBV as List<Tbl_NamBaoVe>;
+}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+
+            @if (TempData["add_success"] != null)
+            {
+                <div class="alert alert-danger text-center" id="AlertBox">
+                    @TempData["add_success"]
+                </div>
+            }
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="nav-center">
+                    <ul class="nav nav-pills nav-pills-info nav-pills-icons" role="tablist">
+                        <!--
+                            color-classes: "nav-pills-primary", "nav-pills-info", "nav-pills-success", "nav-pills-warning","nav-pills-danger"
+                        -->
+                        <!-- Tab Header -->
+                        <li class="active">
+                            <a href="#personal" role="tab" data-toggle="tab">
+                                <i class="material-icons">person</i> Sinh viên thực hiện
+                            </a>
+                        </li>
+                        <li class="ViewFile">
+                            <a href="#file" role="tab" data-toggle="tab">
+                                <i class="material-icons"> menu_book</i> Xem file
+                            </a>
+                        </li>
+                        <li id="GVHD">
+                            <a href="#assign" role="tab" data-toggle="tab">
+                                <i class="material-icons">assignment</i> Giảng viên hướng dẫn
+                            </a>
+                        </li>
+                        <li id="HDC">
+                            <a href="#parents" role="tab" data-toggle="tab">
+                                <i class="material-icons">supervisor_account</i> Hội đồng chấm
+                            </a>
+                        </li>
+                        <li id="TKD">
+                            <a href="#class" role="tab" data-toggle="tab">
+                                <i class="material-icons">class</i> Thống kê điểm
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="tab-content">
+                    <div class="tab-pane" id="file">
+                        <div class="card">
+                            <div class="card-header card-header-icon" data-background-color="blue">
+                                <i class="material-icons">list_alt</i>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="card-title">File Báo Cáo</h4>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="ezuca-video position-relative">
+
+
+                                            <iframe src="/DoAn/GetPDF/@doan.ID" width="1400px" height="1200px"></iframe>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Sinh viên thực hiện -->
+                    <div class="tab-pane active" id="personal">
+                        <div class="card">
+                            <div class="card-header card-header-icon" data-background-color="blue">
+                                <i class="material-icons">person</i>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="card-title">
+                                    Sinh viên thực hiện
+                                </h4>
+                                <form>
+                                    <!-- Normal Information -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-2 dropdown-label">
+                                                <p>Chuyên ngành:</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <select class="form-control" name="ChuyenNganh_ID" id="ChuyenNganh_ID_SVTH" data-style="btn btn-primary btn-round">
+                                                    <option value="" disabled selected>Chọn chuyên ngành</option>
+                                                    @foreach (var item in lstChuyenNganh)
+                                                    {
+                                                        <option value="@item.ID">@item.ChuyenNganh</option>
+                                                    }
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-2 dropdown-label">
+                                                <p>Thuộc lớp:</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <select class="form-control" data-style="btn btn-primary btn-round" name="Lop_ID" id="Lop_ID_SVTH" title="Chọn lớp">
+                                                    <option disabled selected>Chọn lớp</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4 dropdown-label">
+                                                <p>Sinh viên:</p>
+                                            </div>
+                                            <div class="form-group col-md-5">
+                                                <select class="form-control" name="SinhVien_ID" id="SinhVien_ID_SVTH" title="Chọn sinh viên">
+                                                    <option disabled selected>Chọn sinh viên</option>
+                                                </select>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-4 dropdown-label">
+                                                <p>Đợt bảo vệ:</p>
+                                            </div>
+                                            <div class="form-group col-md-5">
+                                                <select class="form-control" name="NamBaoVe_ID" id="NamBaoVe_ID" title="Chọn sinh viên">
+                                                    <option disabled selected>Chọn đợt bảo vệ</option>
+                                                    @foreach (var item in lstNamBV)
+                                                    {
+                                                        <option value="@item.ID">Đợt @item.DotBaoVe năm @item.NamBaoVe</option>
+                                                    }
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <!-- Button -->
+                                    <div class="pull-right">
+                                        <button type="button" class="btn btn-success btn-fill btn_AddSVTG" data-doanid="@doan.ID">Thêm sinh viên</button>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header card-header-icon" data-background-color="blue">
+                                <i class="material-icons">list_alt</i>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="card-title"> Sinh Viên thực hiện</h4>
+                                <div class="toolbar">
+                                    <!--        Here you can write extra buttons/actions for the toolbar              -->
+                                </div>
+                                <div class="material-datatables">
+                                    <table id="datatables2"
+                                           class="table table-striped display responsive table-no-bordered table-hover nowrap"
+                                           style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th width="10%">STT</th>
+                                                <th>Tên sinh viên</th>
+                                                <th>Lớp</th>
+                                                <th>Đợt bảo vệ</th>
+                                                <th width="10%" class="disabled-sorting"></th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                        </tfoot>
+                                        <tbody>
+                                            @foreach (var item in lstThamGia)
+                                            {
+                                                <tr>
+                                                    <td>@dem_1</td>
+                                                    <td>@item.Tbl_SinhVien.TenSinhVien</td>
+                                                    <td>@item.Tbl_SinhVien.Tbl_Lop.TenLop</td>
+                                                    <td>Đợt @item.Tbl_NamBaoVe.DotBaoVe năm @item.Tbl_NamBaoVe.NamBaoVe</td>
+                                                    <td class="td-actions text-right">
+                                                        <button type="button" rel="tooltip" data-id="@item.ID" data-doanid="@doan.ID"
+                                                                class="btn btn-danger btn-round btnDelete_SVTG" title="Xóa sinh viên">
+                                                            <!-- Link on demo.js: warning-message-and-confirmation-6 -->
+                                                            <i class="material-icons">close</i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                dem_1++;
+                                            }
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- end content-->
+                        </div>
+                    </div>
+
+                    <!-- Giảng viên hướng dẫn -->
+                    <div class="tab-pane" id="assign">
+                        <div class="card">
+                            <div class="card-header card-header-icon" data-background-color="blue">
+                                <i class="material-icons">list_alt</i>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="card-title">Danh sách giảng viên hướng dẫn</h4>
+                                <div class="toolbar">
+                                    <!--        Here you can write extra buttons/actions for the toolbar              -->
+                                </div>
+                                <div class="material-datatables">
+                                    <table id="datatables2"
+                                           class="table table-striped display responsive table-no-bordered table-hover nowrap"
+                                           style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Tên giảng viên</th>
+                                                <th>Chuyên ngành</th>
+                                                <th class="disabled-sorting"></th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                        </tfoot>
+                                        <tbody>
+                                            <tr>
+                                                <td>@dem_2</td>
+                                                <td>
+                                                    @if (@doan.Tbl_GiaoVien.TenGiaoVien != null)
+                                                    {
+                                                        @doan.Tbl_GiaoVien.TenGiaoVien
+                                                    }
+                                                </td>
+                                                <td>@doan.Tbl_GiaoVien.Tbl_ChuyenNganh.ChuyenNganh</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- end content-->
+                        </div>
+                    </div>
+
+                    <!-- Hội đồng chấm -->
+                    <div class="tab-pane" id="parents">
+                        <div class="card">
+                            <div class="card-header card-header-icon" data-background-color="blue">
+                                <i class="material-icons">list_alt</i>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="card-title">Danh sách giảng viên trong hội đồng</h4>
+                                <div class="toolbar">
+                                    <!--        Here you can write extra buttons/actions for the toolbar              -->
+                                </div>
+                                <div class="material-datatables">
+                                    <table id="datatables2"
+                                           class="table table-striped display responsive table-no-bordered table-hover nowrap"
+                                           style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Tên giảng viên</th>
+                                                <th>Chuyên ngành</th>
+                                                <th class="disabled-sorting"></th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                        </tfoot>
+                                        <tbody>
+                                            @foreach (var item in lstHDC)
+                                            {
+                                                <tr>
+                                                    <td>@dem_4</td>
+                                                    <td>@item.TenGiaoVien</td>
+                                                    <td>@item.ChuyenNganh</td>
+                                                </tr>
+                                                dem_4++;
+                                            }
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- end content-->
+                        </div>
+
+                    </div>
+
+
+
+
+                    <!-- Thống kê điểm -->
+                    <div class="tab-pane" id="class">
+                        <div class="card">
+                            <div class="card-header card-header-icon" data-background-color="blue">
+                                <i class="material-icons">class</i>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="card-title">Danh sách điểm</h4>
+                                <div class="toolbar">
+                                    <!--        Here you can write extra buttons/actions for the toolbar              -->
+                                </div>
+                                <div class="material-datatables">
+                                    <table id="datatables2"
+                                           class="table table-striped display responsive table-no-bordered table-hover nowrap"
+                                           style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Họ tên sinh viên</th>
+                                                <th>Lớp</th>
+                                                <th>Điểm</th>
+                                                <th class="disabled-sorting"></th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                        </tfoot>
+                                        <tbody>
+                                            @foreach (var item in lstThamGia)
+                                            {
+                                                <tr>
+                                                    <td>@dem_3</td>
+                                                    <td>@item.Tbl_SinhVien.TenSinhVien</td>
+                                                    <td>@item.Tbl_SinhVien.Tbl_Lop.TenLop</td>
+                                                    <td>@item.Diem</td>
+                                                    <td class="td-actions text-right">
+                                                        <button type="button" rel="tooltip" data-id="@item.ID" data-doanid="@doan.ID" title="Sửa điểm sinh viên"
+                                                                class="btn btn-success btn-round btnEditDiem">
+                                                            <i class="material-icons">edit</i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                dem_1++;
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- end content-->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+    </div>
+
+</div>
+
+
+<!--Modal-->
+<!-- Modal -->
+<div class="modal fade editDiem" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Sửa điểm: <span style="color: blue" class="TenSV"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" name="ID" id="ID" />
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Điểm:</label>
+                        <input type="number" max="10" min="3" name="Diem" id="Edit_Diem" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary Edit_Diem" data-doanid="@doan.ID">Sửa</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@section jsScript{
+    <script src="~/Assets/doan/SVTH.js"></script>
+    <script src="~/Assets/doan/GVHD.js"></script>
+    <script src="~/Assets/doan/HDC.js"></script>
+    <script src="~/Assets/doan/GVPB.js"></script>
+    <script src="~/Assets/doan/Diem.js"></script>
+
+
+
+    <script>
+        $(document).ready(function () {
+
+            $('#AlertBox').removeClass('hide');
+
+            //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+            $('#AlertBox').delay(2000).slideUp(500);
+
+
+        }
+    </script>
+}
+
+
+

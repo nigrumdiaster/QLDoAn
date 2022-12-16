@@ -1,0 +1,135 @@
+﻿
+@using PagedList.Mvc
+@model PagedList.IPagedList<QLDoAn.Models.DTO.ThamGiaDTO>
+@using QLDoAn.Models.EF;
+@{
+    ViewBag.Title = "Điểm sinh viên";
+    ViewBag.Navbar = "Điểm đồ án sinh viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int dem = 1;
+    var lstNamBv = ViewBag.NamBaoVe as List<Tbl_NamBaoVe>;
+}
+
+<div class="content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="blue">
+                        <i class="material-icons">search</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">
+                            Tìm kiếm điểm sinh viên
+                        </h4>
+                        <form action="/SinhVien/Filter_Diem" method="get">
+                            <!-- Normal Information -->
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <div class="col-md-8">
+                                        <div class="col-md-3 dropdown-label">
+                                            <p>Đợt bảo vệ:</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <select class="selectpicker" name="NamBaoVe_ID" data-style="btn btn-primary btn-round" required
+                                                    title="Chọn đợt bảo vệ">
+                                                <option value="0" selected>---Chọn đợt bảo vệ---</option>
+                                                @foreach (var item in lstNamBv)
+                                                {
+                                                    <option value="@item.ID">Đợt @item.DotBaoVe năm @item.NamBaoVe</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                   
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-success btn-fill">Lọc điểm</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+
+                    <div class="card-header card-header-icon" data-background-color="blue">
+                        <i class="material-icons">list_alt</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">Danh sách điểm đồ án sinh viên</h4>
+                        <div class="toolbar">
+                            <!--        Here you can write extra buttons/actions for the toolbar              -->
+                        </div>
+                        <div class="material-datatables">
+
+                            <table id="datatables2"
+                                   class="table table-striped display responsive table-no-bordered table-hover nowrap"
+                                   style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên sinh viên</th>
+                                        <th>Tên đồ án</th>
+                                        <th>Điểm</th>
+                                        <th>Chuyên ngành</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@dem</td>
+                                            <td>@item.TenSinhVien</td>
+                                            <td>@item.TenDoAn</td>
+                                            <td>@item.Diem</td>
+                                            <td>@item.ChuyenNganh</td>
+                                        </tr>
+                                        dem++;
+                                    }
+                                </tbody>
+
+
+                            </table>
+                            Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount
+                            @Html.PagedListPager(Model, page => Url.Action("Diem", new { page, pageSize = Model.PageSize }))
+                        </div>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <div class="row">
+            <div class="col-md-4" style="margin-bottom: 10px">
+                @using (Html.BeginForm("Export", "SinhVien", FormMethod.Post))
+                {
+                    <input type="hidden" name="Lop_ID" id="Lop_ID" value="0"/>
+                    <input type="hidden" name="NienKhoa_ID" id="NienKhoa_ID" value="0"/>
+                    <button type="submit" class="btn btn-lg btn-primary">Xuất Excel</button>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section jsScript{
+
+    <script>
+        $(document).ready(function () {
+            $('select[name="Lop_ID"]').change(function () {
+                $('#Lop_ID').val(this.value);
+            });
+
+            $('select[name="NienKhoa_ID"]').change(function () {
+                $('#NienKhoa_ID').val(this.value);
+            });
+        });
+    </script>
+
+}

@@ -1,0 +1,208 @@
+﻿
+@using PagedList.Mvc
+@model PagedList.IPagedList<QLDoAn.Models.DTO.DoAnDTO>
+@using QLDoAn.Models.EF;
+@{
+    var nambaove = ViewBag.NamBaoVe as QLDoAn.Models.EF.Tbl_NamBaoVe;
+    var lop = ViewBag.TenLop as QLDoAn.Models.EF.Tbl_Lop;
+    ViewBag.Title = "Kết quả tìm kiếm";
+    ViewBag.Navbar = "Kết quả tìm kiếm với " + (ViewBag.TenDoAn != null ? "tên đồ án: " + ViewBag.TenDoAn : " ") + (nambaove != null ? " && Đợt " + nambaove.DotBaoVe + " Năm " + nambaove.NamBaoVe : " ") +
+    (ViewBag.MaSinhVien !="" ? ViewBag.MaSinhVien : " ");
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+    int dem = 1;
+    var lstChuyenNganh = ViewBag.ChuyenNganh as List<QLDoAn.Models.EF.Tbl_ChuyenNganh>;
+    var lstLop = ViewBag.lstLop as List<Tbl_Lop>;
+    var listNamBaoVe = ViewBag.listNamBaoVe as List<Tbl_NamBaoVe>;
+    var masinhvien = ViewBag.MaSinhVien;
+
+}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="blue">
+                        <i class="material-icons">search</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">
+                            Tìm kiếm đồ án
+                        </h4>
+                        <form action="/User/DoAn/Search" method="get">
+                            <!-- Normal Information -->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-3">
+                                        <div class="form-group label-floating">
+                                            <label class="control-label">Tên đồ án</label>
+                                            <input type="text" class="form-control" name="TenDoAn" id="TenDoAn" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group label-floating">
+                                            <label class="control-label">Mã Sinh Viên</label>
+                                            <input type="text" class="form-control" name="MaSinhVien" id="MaSinhVien" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        @*<select class="selectpicker" name="Lop_ID" data-style="btn btn-primary btn-round" required
+                                                    title="Chọn lớp">
+                                                <option value="0" selected>---Chọn lớp---</option>
+                                                @foreach (var item in lstLop)
+                                                {
+                                                    <option value="@item.ID">@item.TenLop</option>
+                                                }
+                                            </select>*@
+                                        <select class="selectpicker" name="NamBaoVe_ID" data-style="btn btn-primary btn-round" required
+                                                title="Chọn đợt bảo vệ">
+                                            <option value="0" selected>---Chọn đợt bảo vệ---</option>
+                                            @foreach (var item in listNamBaoVe)
+                                            {
+                                                <option value="@item.ID">Đợt @item.DotBaoVe năm @item.NamBaoVe</option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-success btn-fill">Tìm kiếm</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="card">
+                        <div class="card-header card-header-icon" data-background-color="blue">
+                            <i class="material-icons">list_alt</i>
+                        </div>
+                        <div class="card-content">
+                            <h4 class="card-title">Danh sách đồ án</h4>
+                            <div class="toolbar">
+                                <!--        Here you can write extra buttons/actions for the toolbar              -->
+                            </div>
+                            <div class="material-datatables">
+
+                                <table id="datatables2"
+                                       class="table table-striped display responsive table-no-bordered table-hover nowrap"
+                                       style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Mã đồ án</th>
+                                            <th>Tên đồ án</th>
+                                            <th>Chuyên ngành</th>
+                                            <th>Link đồ án</th>
+                                            <th class="disabled-sorting"></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>@dem</td>
+                                                <td>@item.MaDoAn</td>
+                                                <td>@item.TenDoAn</td>
+                                                <td>@item.ChuyenNganh</td>
+                                                <td>
+                                                    <a href="/User/DoAn/DownloadSource/@item.ID" class="btn btn-warning">Source code</a>
+                                                    <a href="/User/DoAn/DownloadDocument/@item.ID" class="btn btn-primary">Báo cáo</a>
+                                                </td>
+                                                <td class="td-actions">
+                                                    <a href="/User/DoAn/Detail/@item.ID" data-id="@item.ID"
+                                                       class="btn btn-info btn-round" title="Chi tiết đồ án">
+                                                        <i class="material-icons">assignment</i>
+                                                        Xem chi tiết
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            dem++;
+                                        }
+                                    </tbody>
+
+
+                                </table>
+                                Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount
+                                @Html.PagedListPager(Model, page => Url.Action("Search", new
+                                {
+                                    TenDoAn = (ViewBag.TenDoAn != "" ? ViewBag.TenDoAn : ""),
+                                    NamBaoVe_ID = (nambaove != null ? nambaove.ID : 0),
+                                    MasinhVien = (masinhvien != "" ?
+                               masinhvien : ""),
+                                    page,
+                                    pageSize = Model.PageSize
+                                }))
+                            </div>
+                        </div>
+                        <!-- end content-->
+                    </div>
+                    <!--  end card  -->
+                </div>
+                <!-- end col-md-12 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    @section jsScript{
+
+        <script>
+            $(document).ready(function () {
+                //nếu không có thao tác gì thì ẩn đi
+                $('#AlertBox').removeClass('hide');
+
+                //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+                $('#AlertBox').delay(2000).slideUp(500);
+
+
+                $("#TenDoAn").autocomplete({
+                    minLength: 0,
+                    source: function (request, response) {
+                        $.ajax({
+                            url: "/Search/SearchDoAn",//Link lấy dữ liệu gợi ý
+                            dataType: "json",
+                            data: {
+                                q: request.term
+                            },
+                            success: function (res) {
+                                response(res.data);
+                                //response($.map(data, function (item) {
+                                //    return {
+                                //        value: item.Product_Name,
+                                //        label: item.Image
+                                //    }
+                                //}));
+                            }
+                        });
+                    },
+                    focus: function (event, ui) {
+                        $("#TenDoAn").val(ui.item.label);
+                        return false;
+                    },
+                    select: function (event, ui) {
+                        $("#TenDoAn").val(ui.item.label);
+                        //$("#project-id").val(ui.item.value);
+                        //$("#project-description").html(ui.item.desc);
+                        //$("#project-icon").attr("src", "images/" + ui.item.icon);
+
+                        return false;
+                    }
+                })
+                    .autocomplete("instance")._renderItem = function (ul, item) {
+                        return $("<li>")
+                            //.append("<div>" + item.value + "<br>" + item.label + "</div>")
+                            .append("<div>" + item.value + "</div>")
+                            .appendTo(ul);
+                    };
+
+            });
+
+        </script>
+
+    }
+
+
+

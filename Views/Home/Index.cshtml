@@ -1,0 +1,75 @@
+﻿
+@{
+    ViewBag.Title = "Quản lý đồ án";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header" data-background-color="orange">
+                                <i class="material-icons">supervised_user_circle</i>
+                            </div>
+                            <div class="card-content">
+                                <p class="category">Số đồ án</p>
+                                <h3 class="card-title">@ViewBag.DoAn</h3>
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header" data-background-color="rose">
+                                <i class="material-icons">account_circle</i>
+                            </div>
+                            <div class="card-content">
+                                <p class="category">Số sinh viên</p>
+                                <h3 class="card-title">@ViewBag.SinhVien</h3>
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header" data-background-color="green">
+                                <i class="material-icons">supervisor_account</i>
+                            </div>
+                            <div class="card-content">
+                                <p class="category">Số giảng viên</p>
+                                <h3 class="card-title">@ViewBag.GiaoVien</h3>
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header" data-background-color="blue">
+                                <i class="material-icons">assignment</i>
+                            </div>
+                            <div class="card-content">
+                                <p class="category">Số chuyên ngành</p>
+                                <h3 class="card-title">@ViewBag.ChuyenNganh</h3>
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+

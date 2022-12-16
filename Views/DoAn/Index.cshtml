@@ -1,0 +1,1103 @@
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<QLDoAn.Models.EF.Tbl_DoAn>
+@using QLDoAn.Models.EF;
+@{
+    ViewBag.Title = "Quản lý đồ án";
+    ViewBag.Navbar = "Quản lý đồ án";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int dem = 1;
+    var lstChuyenNganh = ViewBag.ChuyenNganh as List<QLDoAn.Models.EF.Tbl_ChuyenNganh>;
+    var lstLop = ViewBag.lstLop as List<Tbl_Lop>;
+    var lstGV = ViewBag.lstGV as List<Tbl_GiaoVien>;
+    var lstHDC = ViewBag.lstHDC as List<Tbl_HDCham>;
+    var listNamBaoVe = ViewBag.listNamBaoVe as List<Tbl_NamBaoVe>;
+    var lstNamBV = ViewBag.NamBV as List<Tbl_NamBaoVe>;
+    var lstSV = ViewBag.sinhvien as List<Tbl_SinhVien>;
+
+
+}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            @if (TempData["add_success"] != null)
+            {
+                <div class="alert alert-success text-center" id="AlertBox">
+                    @TempData["add_success"]
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-md-4" style="margin-bottom: 10px">
+                <button class="btn btn-lg btn-primary" data-toggle="modal" data-target="#addNew">Thêm mới </button>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Thêm mới đồ án</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @using (Html.BeginForm("Add", "DoAn", FormMethod.Post, new { id = "frmAdd", enctype = "multipart/form-data" }))
+                        {
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Tên đồ án</label>
+                                        <input type="text" name="TenDoAn" class="form-control" id="TenDoAn">
+                                    </div>
+                                </div>
+
+                                @*<div class="col-md-6">
+                                        <div class="form-group label-floating">
+                                            <label class="control-label">Mã đồ án</label>
+                                            <input type="text" name="MaDoAn" class="form-control" required>
+                                        </div>
+                                    </div>*@
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating">
+                                        <label for="recipient-name" class="col-form-label">Source code</label>
+                                        <input type="file" name="LinkSource" accept=".zip,.rar,.7zip" class="form-group" required style="opacity: unset;position: unset;">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating">
+                                        <label for="recipient-name" class="col-form-label">File báo cáo</label>
+                                        <input type="file" name="LinkDocument" accept=".pdf" class="form-group" required style="opacity: unset;position: unset;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">Chuyên ngành:</label>
+                                    <select class="selectpicker" required name="ChuyenNganh_ID" id="ChuyenNganh_ID" data-style="btn btn-primary btn-round">
+                                        <option value="" disabled selected>Chọn chuyên ngành</option>
+                                        @foreach (var item in lstChuyenNganh)
+                                        {
+                                            <option value="@item.ID">@item.ChuyenNganh</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">Giáo viên hướng dẫn:</label>
+                                    <select class="selectpicker" required name="GiaoVien_ID" id="GiaoVien_ID" data-style="btn btn-primary btn-round">
+                                        <option value="" disabled selected>Chọn giáo viên hướng dẫn</option>
+                                        @foreach (var item in lstGV)
+                                        {
+                                            <option value="@item.ID">@item.TenGiaoVien</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">Hội đồng chấm:</label>
+                                    <select class="selectpicker" required name="HDCham_ID" data-style="btn btn-primary btn-round" id="HDCham_ID">
+                                        <option value="" disabled selected>Chọn hội đồng chấm </option>
+                                        @foreach (var item in lstHDC)
+                                        {
+                                            <option value="@item.ID">@item.TenHoiDong</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="tab-pane active" id="personal">
+                                    <div class="card">
+                                        <div class="card-header card-header-icon" data-background-color="blue">
+                                            <i class="material-icons">person</i>
+                                        </div>
+                                        <div class="card-content">
+                                            <h4 class="card-title">
+                                                Sinh viên thực hiện
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="col-md-2 dropdown-label">
+                                        <p>Chuyên ngành:</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-control" name="ChuyenNganh_ID" id="ChuyenNganh_ID_SVTH" data-style="btn btn-primary btn-round" required>
+                                            <option value="" disabled selected>Chọn chuyên ngành</option>
+                                            @foreach (var item in lstChuyenNganh)
+                                            {
+                                                <option value="@item.ID">@item.ChuyenNganh</option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-2 dropdown-label">
+                                        <p>Thuộc lớp:</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-control" data-style="btn btn-primary btn-round" name="Lop_ID" id="Lop_ID_SVTH" title="Chọn lớp " required>
+                                            <option value="" disabled selected>Chọn lớp</option>
+                                            @foreach (var item in lstLop)
+                                            {
+                                                <option value="@item.ID">@item.TenLop</option>
+                                            }
+
+
+
+
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="col-md-4 dropdown-label">
+                                        <p>Sinh viên:</p>
+                                    </div>
+                                    <div class="form-group col-md-5">
+                                        <select class="form-control" name="SinhVien_ID" id="SinhVien_ID_SVTH" title="Chọn sinh viên" required>
+                                            <option disabled selected>Chọn sinh viên</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="col-md-4 dropdown-label">
+                                        <p>Đợt bảo vệ:</p>
+                                    </div>
+                                    <div class="form-group col-md-5">
+                                        <select class="form-control" name="NamBaoVe_ID" id="NamBaoVe_ID" title="Chọn sinh viên" required>
+                                            <option disabled selected>Chọn đợt bảo vệ</option>
+                                            @foreach (var item in lstNamBV)
+                                            {
+                                                <option value="@item.ID">Đợt @item.DotBaoVe năm @item.NamBaoVe</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="col-md-4">
+                                        <div class="form-group  col-md-5">
+                                            <label for="recipient-name" class="col-form-label">Điểm:</label>
+                                            <input type="number" max="10" min="3" name="Diem" class="form-control" id="Diem_ID" required>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+
+
+
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary btn-lg" id="btn_AddDoAn">Thêm mới</button>
+                            </div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="blue">
+                        <i class="material-icons">search</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">
+                            Tìm kiếm đồ án
+                        </h4>
+                        <form action="/DoAn/Search" method="get">
+                            <!-- Normal Information -->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-3">
+                                        <div class="form-group label-floating">
+                                            <label class="control-label">Tên đồ án</label>
+                                            <input type="text" class="form-control" name="TenDoAn" id="TenDoAn" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group label-floating">
+                                            <label class="control-label">Mã Sinh Viên</label>
+                                            <input type="text" class="form-control" name="MaSinhVien" id="MaSinhVien" required>
+                                        </div>
+                                    </div>
+
+                                   
+                                        <div class="col-md-3">
+                                            <select class="selectpicker" name="NamBaoVe_ID" id="NamBaoVe_ID" data-style="btn btn-primary btn-round" required
+                                                    title="Chọn đợt bảo vệ">
+                                                <option value="0" selected>- - -Chọn đợt bảo vệ - - -</option>
+                                                @foreach (var item in listNamBaoVe)
+                                                {
+                                                    <option value="@item.ID">Đợt @item.DotBaoVe năm @item.NamBaoVe</option>
+                                                }
+                                            </select>
+                                            @*<select class="selectpicker" name="Lop_ID" data-style="btn btn-primary btn-round" required
+                        title="Chọn lớp">
+                    <option value="0" selected>---Chọn lớp---</option>
+                    @foreach (var item in lstLop)
+                    {
+                        <option value="@item.ID">@item.TenLop</option>
+                    }
+                </select>*@
+
+                                        </div>
+                                    
+                                    <div class="col-md-3">
+                                        <button type="submit" class="btn btn-success btn-fill" id="btn_SearchDoAn">Tìm kiếm</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="card">
+                        <div class="card-header card-header-icon" data-background-color="blue">
+                            <i class="material-icons">list_alt</i>
+                        </div>
+                        <div class="card-content">
+                            <h4 class="card-title">Danh sách đồ án</h4>
+                            <div class="toolbar">
+                                <!--        Here you can write extra buttons/actions for the toolbar              -->
+                            </div>
+                            <div class="material-datatables">
+
+                                <table id="datatables2"
+                                       class="table table-striped display responsive table-no-bordered table-hover nowrap"
+                                       style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>STT</th>
+                                            @*<th>Mã đồ án</th>*@
+                                            <th>Tên đồ án</th>
+                                            <th>Chuyên ngành</th>
+                                            <th>Link đồ án</th>
+                                            <th class="disabled-sorting"></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>@dem</td>
+                                                @*<td>@item.MaDoAn</td>*@
+                                                <td>@item.TenDoAn</td>
+                                                <td>@item.Tbl_ChuyenNganh.ChuyenNganh</td>
+                                                <td>
+                                                    <a href="/DoAn/DownloadSource/@item.ID" class="btn btn-warning">Source code</a>
+                                                    <a href="/DoAn/DownloadDocument/@item.ID" class="btn btn-primary">Báo cáo</a>
+                                                </td>
+                                                <td class="td-actions">
+                                                    <a href="/DoAn/Detail/@item.ID" data-id="@item.ID"
+                                                       class="btn btn-info btn-round" title="Chi tiết đồ án">
+                                                        <i class="material-icons">assignment</i>
+                                                        Xem chi tiết
+                                                    </a>
+                                                    <button type="button" rel="tooltip" data-id="@item.ID"
+                                                            class="btn btn-success btn-round btnEdit">
+                                                        <i class="material-icons">edit</i>
+                                                    </button>
+                                                    <button type="button" rel="tooltip"
+                                                            class="btn btn-danger btn-round btnDelete" data-id="@item.ID" title="Xóa đồ án">
+                                                        <!-- Link on demo.js: warning-message-and-confirmation-6 -->
+                                                        <i class="material-icons">close</i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            dem++;
+                                        }
+                                    </tbody>
+
+
+                                </table>
+                                Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount
+                                @Html.PagedListPager(Model, page => Url.Action("Index", new { page, pageSize = Model.PageSize }))
+                            </div>
+                        </div>
+                        <!-- end content-->
+                    </div>
+                    <!--  end card  -->
+                </div>
+                <!-- end col-md-12 -->
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade editNienKhoa" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Sửa đồ án</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.BeginForm("Edit", "DoAn", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+
+
+                        <input type="hidden" name="ID" id="ID" />
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group label-floating">
+                                    <label for="recipient-name" class="col-form-label">Tên đồ án:</label>
+                                    <input type="text" name="TenDoAn" id="TenDoAn_Edit" class="form-control" required>
+                                </div>
+                            </div>
+                            @*<div class="col-md-6">
+                                    <div class="form-group label-floating">
+                                        <label for="recipient-name" class="col-form-label">Mã đồ án:</label>
+                                        <input type="text" name="MaDoAn" id="MaDoAn" class="form-control" required>
+                                    </div>
+                                </div>*@
+                            <div class="col-md-6">
+                                <div class="form-group label-floating" style="display: grid;">
+                                    <label>Source code</label>
+                                    @*<input type="file" name="Image" accept="image/*">*@
+                                    <label for="file-upload-linkSource" class="custom-file-upload">
+                                        <i class="material-icons">cloud_upload</i> <span id="file_source"></span>
+                                    </label>
+                                    <input id="file-upload-linkSource" name="LinkSource" type="file" style="display:none;" accept=".zip,.rar,.7zip">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group label-floating" style="display: grid;">
+                                    <label>File báo cáo</label>
+                                    @*<input type="file" name="Image" accept="image/*">*@
+                                    <label for="file-upload-linkDoc" class="custom-file-upload">
+                                        <i class="material-icons">cloud_upload</i> <span id="file_doc"></span>
+                                    </label>
+                                    <input id="file-upload-linkDoc" name="LinkDocument" type="file" style="display:none;" accept=".pdf">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-4">
+                            <label for="recipient-name" class="col-form-label">Chuyên ngành:</label>
+                            <select class="selectpicker" name="ChuyenNganh_ID" id="ChuyenNganh_ID" data-style="btn btn-primary btn-round" required>
+                                <option value="" disabled>Chọn chuyên ngành</option>
+                                @foreach (var item in lstChuyenNganh)
+                                {
+                                    <option value="@item.ID">@item.ChuyenNganh</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="recipient-name" class="col-form-label">Giáo viên hướng dẫn:</label>
+                            <select class="selectpicker" name="GiaoVien_ID" id="GiaoVien_ID" data-style="btn btn-primary btn-round" required>
+                                <option value="" disabled selected>Chọn giáo viên hướng dẫn</option>
+                                @foreach (var item in lstGV)
+                                {
+                                    <option value="@item.ID">@item.TenGiaoVien</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="recipient-name" class="col-form-label">Hội đồng chấm:</label>
+                            <select class="selectpicker" name="HDCham_ID" id="HDCham_ID" data-style="btn btn-primary btn-round" required>
+                                <option value="" disabled selected>Chọn hội đồng chấm</option>
+                                @foreach (var item in lstHDC)
+                                {
+                                    <option value="@item.ID">@item.TenHoiDong</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <div class="tab-pane active" id="personal">
+                                <div class="card">
+                                    <div class="card-header card-header-icon" data-background-color="blue">
+                                        <i class="material-icons">person</i>
+                                    </div>
+                                    <div class="card-content">
+                                        <h4 class="card-title">
+                                            Sinh viên thực hiện
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-2 dropdown-label">
+                                    <p>Chuyên ngành:</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-control" name="ChuyenNganh_ID" id="ChuyenNganh_ID_SVTH1" data-style="btn btn-primary btn-round">
+                                        <option disabled >Chọn chuyên ngành</option>
+                                        @foreach (var item in lstChuyenNganh)
+                                        {
+                                            <option value="@item.ID">@item.ChuyenNganh</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-md-2 dropdown-label">
+                                    <p>Thuộc lớp:</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-control" data-style="btn btn-primary btn-round" name="Lop_ID" id="Lop_ID_SVTH1" title="Chọn lớp">
+                                        <option disabled>Chọn lớp</option>
+                                        @foreach (var item in lstLop)
+                                        {
+                                            <option value="@item.ID">@item.TenLop</option>
+                                        }
+
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="col-md-4 dropdown-label">
+                                    <p>Sinh viên:</p>
+                                </div>
+                                <div class="form-group col-md-5">
+                                    <select class="form-control" name="SinhVien_ID" id="SinhVien_ID_SVTH1" title="Chọn sinh viên">
+
+
+                                        <option value="" disabled >Chọn sinh viên</option>
+                                        @foreach (var item in lstSV)
+                                        {
+                                            <option value="@item.ID">@item.TenSinhVien</option>
+                                        }
+
+
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-4 dropdown-label">
+                                    <p>Đợt bảo vệ:</p>
+                                </div>
+                                <div class="form-group col-md-5">
+                                    <select class="form-control" name="NamBaoVe_ID" id="NamBaoVe_ID1" title="Chọn sinh viên">
+                                        <option disabled selected>Chọn đợt bảo vệ</option>
+                                        @foreach (var item in lstNamBV)
+                                        {
+                                            <option value="@item.ID">Đợt @item.DotBaoVe năm @item.NamBaoVe</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-4">
+                                    <div class="form-group  col-md-5">
+                                        <label for="recipient-name" class="col-form-label">Điểm:</label>
+                                        <input type="number" max="10" min="3" name="Diem" class="form-control" id="Diem_ID1" required>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+
+
+
+
+
+
+
+
+
+                        <div class="form-group">
+                            <button type="submit" id="btn_Edit" class="btn btn-primary">Sửa</button>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+    var btnedit = document.getElementById("btn_Edit").onclick = function () {
+        // Bước 1: Lấy giá trị của username và password
+
+        var TenDoAn_Edit = document.getElementById('TenDoAn_Edit').value;
+        var SinhVien_ID_SVTH1 = document.getElementById('SinhVien_ID_SVTH1').value;
+        var Diem_ID1 = document.getElementById('Diem_ID1').value;
+        var NamBaoVe_ID = document.getElementById('NamBaoVe_ID1').value;
+
+        //var ChuyenNganh_ID = document.getElementById('ChuyenNganh_ID').value;
+        //var GiaoVien_ID = document.getElementById('GiaoVien_ID').value;
+        ///*  var ChuyenNganh_ID = document.getElementById('ChuyenNganh_ID').value;*/
+        //var HDCham_ID = document.getElementById('HDCham_ID').value;
+
+
+
+
+
+
+        // Bước 2: Kiểm tra dữ liệu hợp lệ hay không
+        if (TenDoAn_Edit.trim() == '' | Diem_ID1.trim() == '' | SinhVien_ID_SVTH1.trim() == '' | NamBaoVe_ID.trim() == '' /* HDCham_ID.trim() == ''*/) {
+
+            alert('Bạn hãy nhập đầy đủ thông tin');
+        }
+
+        else {
+            return true;
+        }
+
+        return false;
+
+    }
+
+
+
+</script>
+
+
+<script>
+
+    var btnADD = document.getElementById("btn_AddDoAn").onclick = function () {
+        // Bước 1: Lấy giá trị của username và password
+
+        var TenDoAn = document.getElementById('TenDoAn').value;
+        var ChuyenNganh_ID = document.getElementById('ChuyenNganh_ID').value;
+        var GiaoVien_ID = document.getElementById('GiaoVien_ID').value;
+        /*    var ChuyenNganh_ID = document.getElementById('ChuyenNganh_ID').value;*/
+        var ChuyenNganh_ID_SVTH = document.getElementById('ChuyenNganh_ID_SVTH').value;
+        var Lop_ID_SVTH = document.getElementById('Lop_ID_SVTH').value;
+        var SinhVien_ID_SVTH = document.getElementById('SinhVien_ID_SVTH').value;
+        var NamBaoVe_ID = document.getElementById('NamBaoVe_ID').value;
+        var Diem_ID = document.getElementById('Diem_ID').value;
+        var HDCham_ID = document.getElementById('HDCham_ID').value;
+
+
+
+
+
+        // Bước 2: Kiểm tra dữ liệu hợp lệ hay không
+        if (TenDoAn.trim() == '' | GiaoVien_ID.trim() == '' | ChuyenNganh_ID.trim() == '' | ChuyenNganh_ID_SVTH.trim() == ''
+
+            | Lop_ID_SVTH.trim() == '' | SinhVien_ID_SVTH.trim() == '' | NamBaoVe_ID.trim() == '' | Diem_ID.trim() == '' | HDCham_ID.trim() == ''
+
+
+        ) {
+
+            alert('Bạn hãy nhập đầy đủ thông tin');
+        }
+
+        else {
+            return true;
+        }
+
+        return false;
+
+    }
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+<script>
+
+
+
+    $(document).ready(function () {
+        //nếu không có thao tác gì thì ẩn đi
+        //$('#AlertBox').removeClass('hide');
+
+        ////Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+        //$('#AlertBox').delay(2000).slideUp(500);
+
+        //$('.btnDelete_SVTG').off('click').on('click', function () {
+        //    var doanid = $(this).data('doanid');
+        //    const notice = PNotify.notice({
+        //        title: 'Thông báo',
+        //        text: 'Bạn thật sự muốn xóa?',
+        //        icon: 'fa fa-question-circle',
+        //        width: '360px',
+        //        minHeight: '110px',
+        //        hide: false,
+        //        closer: false,
+        //        sticker: false,
+        //        destroy: true,
+        //        stack: new PNotify.Stack({
+        //            dir1: 'down',
+        //            modal: true,
+        //            firstpos1: 25,
+        //            overlayClose: false
+        //        }),
+        //        modules: new Map([
+        //            ...PNotify.defaultModules,
+        //            [PNotifyConfirm, {
+        //                confirm: true
+        //            }]
+        //        ])
+        //    });
+
+        //    notice.on('pnotify:confirm', () =>
+
+        //        $.ajax({
+        //            data: { ID: $(this).data('id') },
+        //            url: '/DoAn/Delete_SVTG',
+        //            dataType: 'Json',
+        //            type: 'POST',
+        //            success: function (res) {
+        //                if (res.status == true) {
+        //                    window.location.href = "/DoAn/Detail/" + doanid;
+        //                    PNotify.success({
+        //                        title: 'THÔNG BÁO!!',
+        //                        text: 'Xóa sinh viên tham gia thành công.'
+        //                    });
+        //                } else {
+        //                    PNotify.error({
+        //                        title: 'THÔNG BÁO!!',
+        //                        text: 'Xóa sinh viên tham gia KHÔNG thành công.'
+        //                    });
+        //                }
+        //            }
+        //        })
+
+        //    );
+
+
+        //});
+
+        //$('.btn_AddSVTG').click(function (event) {
+        //    var doanid = $(this).data('doanid');
+        //    $.ajax({
+        //        type: 'GET',
+        //        url: "/DoAn/AddSVTG",
+        //        data: {
+        //            doAn_ID: $(this).data('doanid'),
+        //            sinhVien_ID: $("#SinhVien_ID_SVTH").val(),
+        //            namBaoVe_ID: $("#NamBaoVe_ID").val()
+        //        },
+        //        dataType: 'Json',
+        //        contentType: "application/json; charset=utf-8",
+        //        success: function (res) {
+        //            if (res.status == true) {
+        //                window.location.href = "/DoAn/Detail/" + doanid;
+        //                PNotify.success({
+        //                    title: 'THÔNG BÁO!!',
+        //                    text: 'Thêm sinh viên tham gia thành công.'
+        //                });
+        //            }
+        //        }
+        //    });
+        //});
+
+
+    });
+
+
+
+
+</script>
+
+
+@section jsScript{
+    <script src="~/Assets/doan/SVTH.js"></script>
+    <script src="~/Assets/doan/GVHD.js"></script>
+    <script src="~/Assets/doan/HDC.js"></script>
+    <script src="~/Assets/doan/GVPB.js"></script>
+    <script src="~/Assets/doan/Diem.js"></script>
+
+
+
+
+   
+
+
+    <script>
+        $(document).ready(function () {
+
+
+
+           
+
+
+
+
+
+
+
+
+
+
+
+
+            $('.btnEdit').click(function (event) {
+                $('.editNienKhoa').modal('show');
+                //alert($(this).data('id'));
+                var ID = $(this).data('id');
+                $.ajax({
+                    url: "/DoAn/sinhvienbydoan/" + ID,
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (res) {
+                        $('#Diem_ID1').val(res[0].Diem);
+                        $('select#NamBaoVe_ID1').val(res[0].NamBaoVe_ID);
+                        $('#SinhVien_ID_SVTH1select').val(res[0].SinhVien_ID);
+
+                        console.log(res);
+                    }
+                });
+                $.ajax({
+                    url: "/DoAn/getChuyenNganhByDoAn/" + ID,
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (res) {
+                     
+                        $('#ChuyenNganh_ID_SVTH1select').val(res[0].ChuyenNganh_ID);
+                      
+                    }
+                });
+                $.ajax({
+                    url: "/DoAn/lopbydoan/" + ID,
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (res) {
+
+                        $('#Lop_ID_SVTH1select').val(res[0].Lop_ID);
+
+                    }
+                });
+
+              
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                $("#ChuyenNganh_ID_SVTH1").change(function () {
+                    var ID = this.value;
+                    $.ajax({
+                        url: '/DoAn/GetLopByChuyenNganh/' + ID,
+                        type: 'get',
+                        dataType: 'json',
+                        contentType: "application/json;charset=utf-8",
+                        success: function (response) {
+                            $("#Lop_ID_SVTH1").empty();
+                            var def = "<option disabled selected>Chọn lớp</option>";
+                            $("#Lop_ID_SVTH1").append(def);
+                            $.each(response, function (i, item) {
+                                var option = "<option value='" + response[i].ID + "'>" + response[i].TenLop + "</option>";
+
+                                $("#Lop_ID_SVTH1").append(option);
+                            });
+                            console.log(response)
+
+                        }
+                    });
+                });
+
+                $("#Lop_ID_SVTH1").change(function () {
+                    var ID = this.value;
+                    $.ajax({
+                        url: '/DoAn/GetSVByLop/' + ID,
+                        type: 'get',
+                        dataType: 'json',
+                        contentType: "application/json;charset=utf-8",
+                        success: function (response) {
+                            $("#SinhVien_ID_SVTH1").empty();
+                            var def = "<option disabled selected>Chọn sinh viên</option>";
+                            $("#SinhVien_ID_SVTH1").append(def);
+                            $.each(response, function (i, item) {
+                                var option = "<option value='" + response[i].ID + "'>" + response[i].TenSinhVien + "</option>";
+
+                                $("#SinhVien_ID_SVTH1").append(option);
+                            });
+
+                        }
+                    });
+                });
+
+
+
+
+
+
+
+
+             
+            });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //nếu không có thao tác gì thì ẩn đi
+            $('#AlertBox').removeClass('hide');
+
+            //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+            $('#AlertBox').delay(2000).slideUp(500);
+
+            $('#file-upload-linkSource').change(function () {
+                var i = $(this).prev('label').clone();
+                var file = '<i class="material-icons">cloud_upload</i>' + $('#file-upload-linkSource')[0].files[0].name;
+                $(this).prev('label').empty();
+                $(this).prev('label').append(file);
+            });
+
+            $('#file-upload-linkDoc').change(function () {
+                var i = $(this).prev('label').clone();
+                var file = '<i class="material-icons">cloud_upload</i>' + $('#file-upload-linkDoc')[0].files[0].name;
+                $(this).prev('label').empty();
+                $(this).prev('label').append(file);
+            });
+
+
+            $("#TenDoAn").autocomplete({
+                minLength: 0,
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/Search/SearchDoAn",//Link lấy dữ liệu gợi ý
+                        dataType: "json",
+                        data: {
+                            q: request.term
+                        },
+                        success: function (res) {
+                            response(res.data);
+                            //response($.map(data, function (item) {
+                            //    return {
+                            //        value: item.Product_Name,
+                            //        label: item.Image
+                            //    }
+                            //}));
+                        }
+                    });
+                },
+                focus: function (event, ui) {
+                    $("#TenDoAn").val(ui.item.label);
+                    return false;
+                },
+                select: function (event, ui) {
+                    $("#TenDoAn").val(ui.item.label);
+                    //$("#project-id").val(ui.item.value);
+                    //$("#project-description").html(ui.item.desc);
+                    //$("#project-icon").attr("src", "images/" + ui.item.icon);
+
+                    return false;
+                }
+            })
+                .autocomplete("instance")._renderItem = function (ul, item) {
+                    return $("<li>")
+                        //.append("<div>" + item.value + "<br>" + item.label + "</div>")
+                        .append("<div>" + item.value + "</div>")
+                        .appendTo(ul);
+                };
+
+
+            $('.btnDelete').off('click').on('click', function () {
+                const notice = PNotify.notice({
+                    title: 'Thông báo',
+                    text: 'Bạn thật sự muốn xóa?',
+                    icon: 'fa fa-question-circle',
+                    width: '360px',
+                    minHeight: '110px',
+                    hide: false,
+                    closer: false,
+                    sticker: false,
+                    destroy: true,
+                    stack: new PNotify.Stack({
+                        dir1: 'down',
+                        modal: true,
+                        firstpos1: 25,
+                        overlayClose: false
+                    }),
+                    modules: new Map([
+                        ...PNotify.defaultModules,
+                        [PNotifyConfirm, {
+                            confirm: true
+                        }]
+                    ])
+                });
+
+                notice.on('pnotify:confirm', () =>
+                    $.ajax({
+                        data: { ID: $(this).data('id') },
+                        url: '/DoAn/Delete',
+                        dataType: 'Json',
+                        type: 'POST',
+                        success: function (res) {
+                            if (res.status == true) {
+                                window.location.href = "/DoAn";
+                                PNotify.success({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa đồ án thành công.'
+                                });
+                            } else {
+                                PNotify.error({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa đồ án KHÔNG thành công.'
+                                });
+                            }
+                        }
+                    })
+
+                );
+
+
+            });
+
+            $('.btnEdit').click(function (event) {
+                $('.editNienKhoa').modal('show');
+                //alert($(this).data('id'));
+                var ID = $(this).data('id');
+                $.ajax({
+                    url: "/DoAn/GetByID/" + ID,
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (res) {
+                        $('#TenDoAn_Edit').val(res[0].TenDoAn);
+                        $('#MaDoAn').val(res[0].MaDoAn);
+                        $('#LinkSource').val(res[0].LinkSource);
+                        $('#ChuyenNganh_ID select').val(res[0].ChuyenNganh_ID);
+                        $('select#GiaoVien_ID').val(res[0].GiaoVien_ID);
+                        $('select#HDCham_ID').val(res[0].HDCham_ID);
+                        $('#ID').val(res[0].ID);
+                        $('#file_doc').text(res[0].LinkDocument);
+                        $('#file_source').text(res[0].LinkSource);
+                        $("Button[data-id='ChuyenNganh_ID'] span.pull-left").text(res[0].ChuyenNganh);
+                        $("Button[data-id='GiaoVien_ID'] span.pull-left").text(res[0].GVHD);
+                        $("Button[data-id='HDCham_ID'] span.pull-left").text(res[0].HDC);
+                        console.log(res);
+                    }
+                });
+            });
+        });
+
+        var tg_1 = true, tg_2 = true;
+        $(function () {
+
+
+            $('input[name="LinkSource"]').change(function () {
+                var t = $(this).val();
+
+                const size = Math.round((this.files[0].size / 1024));
+                var extensionFile = this.files[0].name.split('.').pop()
+                console.log(size);
+                console.log(extensionFile);
+                //console.log(this.files[0].length);
+                if (size >= 202400) {
+                    $('#btn_AddDoAn').attr("disabled", true);
+                    alert("File quá lớn. Vui lòng chọn File không vượt quá 200 MB");
+                    tg_1 = false;
+                    return false;
+                }
+                else if (extensionFile == "zip" || extensionFile == "rar" || extensionFile == "7zip") {
+                    $('#btn_AddDoAn').attr("disabled", false);
+                    tg_1 = true;
+                }
+                else {
+                    $('#btn_AddDoAn').attr("disabled", true);
+                    alert("Bạn vui lòng chọn File zip, rar hoặc 7zip");
+                    tg_1 = false;
+                    return false;
+                }
+
+            });
+
+            $('input[name="LinkDocument"]').change(function () {
+                var t = $(this).val();
+
+                const size = Math.round((this.files[0].size / 1024));
+                var extensionFile = this.files[0].name.split('.').pop()
+                console.log(size);
+                console.log(extensionFile);
+                //console.log(this.files[0].length);
+                if (tg_1) {
+                    if (size >= 102400) {
+                        $('#btn_AddDoAn').attr("disabled", true);
+                        alert("File quá lớn. Vui lòng chọn File không vượt quá 100 MB");
+                        tg_2 = false;
+                        return false;
+                    }
+                    else if (extensionFile == "pdf" /*|| extensionFile == "docx" || extensionFile == "doc"*/) {
+                        $('#btn_AddDoAn').attr("disabled", false);
+                        tg_2 = true;
+                    }
+                    else {
+                        $('#btn_AddDoAn').attr("disabled", true);
+                        alert("Bạn vui lòng chọn File: .doc hoặc .docx hoặc pdf");
+                        tg_2 = false;
+                        return false;
+                    }
+                } else {
+                    $('#btn_AddDoAn').attr("disabled", true);
+                    alert("Bạn chọn file không hợp lệ, vui lòng chọn lại");
+                    return false;
+                }
+
+            });
+        });
+    </script>
+
+}
+

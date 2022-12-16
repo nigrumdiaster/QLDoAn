@@ -1,0 +1,252 @@
+﻿
+@{
+    ViewBag.Title = "Tra cứu đồ án";
+    ViewBag.Navbar = "Tra cứu đồ án";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content">
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="nav-center">
+                    <ul class="nav nav-pills nav-pills-info nav-pills-icons" role="tablist">
+                        <!--
+                            color-classes: "nav-pills-primary", "nav-pills-info", "nav-pills-success", "nav-pills-warning","nav-pills-danger"
+                        -->
+                        <!-- Tab Header -->
+                        <li class="active">
+                            <a href="#personal" role="tab" data-toggle="tab">
+                                <i class="material-icons">assignment</i> Tìm kiếm đồ án
+                            </a>
+                        </li>
+                        @*<li>
+                            <a href="#assign" role="tab" data-toggle="tab">
+                                <i class="material-icons">person</i> Tìm kiếm giảng viên
+                            </a>
+                        </li>*@
+                        <li>
+                            <a href="#parents" role="tab" data-toggle="tab">
+                                <i class="material-icons">supervisor_account</i> Tìm kiếm sinh viên
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="tab-content">
+
+                    <!-- Tìm kiếm đồ án -->
+                    <div class="tab-pane active" id="personal">
+                        <div class="card">
+                            <div class="card-header card-header-icon" data-background-color="blue">
+                                <i class="material-icons">assignment</i>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="card-title">
+                                    Tìm kiếm đồ án
+                                </h4>
+                                <form>
+                                    <!-- Normal Information -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-6">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Tên đồ án</label>
+                                                    <input type="text" class="form-control" id="TenDoAn" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Giảng viên hướng dẫn</label>
+                                                    <input type="text" class="form-control" id="GVHD" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Button -->
+                                    <div class="pull-right">
+                                        <button type="button" class="btn btn-success btn-fill" id="btn_SearchDoAn">Tìm kiếm</button>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header card-header-icon" data-background-color="blue">
+                                <i class="material-icons">list_alt</i>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="card-title">Danh sách đồ án</h4>
+                                <div class="toolbar">
+                                    <!--        Here you can write extra buttons/actions for the toolbar              -->
+                                </div>
+                                <div class="material-datatables">
+                                    <table id="datatables2"
+                                           class="table table-striped display responsive table-no-bordered table-hover nowrap"
+                                           style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th></th>
+                                                <th>Tên đồ án</th>
+                                                <th>Giáo viên hướng dẫn</th>
+                                                <th>Chuyên ngành</th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                        </tfoot>
+                                        <tbody id="table_DoAn_GVHD">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- end content-->
+                        </div>
+                    </div>
+
+                    <!-- Tìm kiếm giảng viên -->
+                    <div class="tab-pane" id="assign">
+                        <div class="card">
+                            <div class="card-header card-header-icon" data-background-color="blue">
+                                <i class="material-icons">person</i>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="card-title">
+                                    Tìm kiếm giảng viên
+                                </h4>
+                                <form>
+                                    <!-- Normal Information -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-12">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Tên giảng viên*</label>
+                                                    <input type="text" class="form-control" id="TenGV" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Button -->
+                                    <div class="pull-right">
+                                        <button type="button" class="btn btn-success btn-fill" id="btn_SearchTenGV">Tìm kiếm</button>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header card-header-icon" data-background-color="blue">
+                                <i class="material-icons">list_alt</i>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="card-title">Danh sách giảng viên</h4>
+                                <div class="toolbar">
+                                    <!--        Here you can write extra buttons/actions for the toolbar              -->
+                                </div>
+                                <div class="material-datatables">
+                                    <table id="datatables2"
+                                           class="table table-striped display responsive table-no-bordered table-hover nowrap"
+                                           style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Tên giảng viên</th>
+                                                <th>Tên đồ án hướng dẫn</th>
+                                                <th>Chuyên ngành</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                        </tfoot>
+                                        <tbody id="table_GVHD">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- end content-->
+                        </div>
+                    </div>
+
+                    <!-- Tìm kiếm sinh viên  -->
+                    <div class="tab-pane" id="parents">
+                        <div class="card">
+                            <div class="card-header card-header-icon" data-background-color="blue">
+                                <i class="material-icons">supervisor_account</i>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="card-title">
+                                    Tìm kiếm sinh viên
+                                </h4>
+                                <form>
+                                    <!-- Normal Information -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-12">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Tên sinh viên *</label>
+                                                    <input type="text" class="form-control" id="TenSinhVien" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Button -->
+                                    <div class="pull-right">
+                                        <button type="button" class="btn btn-success btn-fill" id="btn_SearchSinhVien">Tìm kiếm</button>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header card-header-icon" data-background-color="blue">
+                                <i class="material-icons">list_alt</i>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="card-title">Danh sách sinh viên</h4>
+                                <div class="toolbar">
+                                    <!--        Here you can write extra buttons/actions for the toolbar              -->
+                                </div>
+                                <div class="material-datatables">
+                                    <table id="datatables2"
+                                           class="table table-striped display responsive table-no-bordered table-hover nowrap"
+                                           style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Tên sinh viên</th>
+                                                <th>Tên đồ án</th>
+                                                <th>Chuyên ngành</th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                        </tfoot>
+                                        <tbody id="table_SinhVien">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- end content-->
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+    </div>
+
+</div>
+
+
+@section jsScript{
+    <script src="~/Assets/doan/Search.js"></script>
+}
+

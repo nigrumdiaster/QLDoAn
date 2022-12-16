@@ -1,0 +1,176 @@
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<QLDoAn.Models.EF.Tbl_HDCham>
+
+@{
+    ViewBag.Title = "Quản lý hội đồng";
+    ViewBag.Navbar = "Quản lý hội đồng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int dem = 1;
+}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            @if (TempData["add_success"] != null)
+            {
+                <div class="alert alert-success text-center" id="AlertBox">
+                    @TempData["add_success"]
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-md-4" style="margin-bottom: 10px">
+                <a class="btn btn-lg btn-primary " href="/HoiDong/Add">Thêm mới </a>
+            </div>
+        </div>
+       
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="blue">
+                        <i class="material-icons">list_alt</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">Danh sách hội đồng</h4>
+                        <div class="toolbar">
+                            <!--        Here you can write extra buttons/actions for the toolbar              -->
+                        </div>
+                        <div class="material-datatables">
+
+                            <table id="datatables2"
+                                   class="table table-striped display responsive table-no-bordered table-hover nowrap"
+                                   style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Hội đồng</th>
+                                        <th>Giáo viên trong hội đồng</th>
+                                        <th class="disabled-sorting"></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@dem</td>
+                                            <td>@item.TenHoiDong</td>
+                                            <td>
+                                                @foreach(var jtem in item.Tbl_HoiDong.Where(x => x.HDCham_ID == item.ID))
+                                                {
+                                                    <p>@jtem.Tbl_GiaoVien.TenGiaoVien</p>
+                                                }
+                                            </td>
+                                            <td class="td-actions">
+                                                <a href="/HoiDong/Edit/@item.ID"
+                                                        class="btn btn-success btn-round btnEdit">
+                                                    <i class="material-icons">edit</i>
+                                                </a>
+                                                <button type="button" rel="tooltip"
+                                                        class="btn btn-danger btn-round btnDelete" data-id="@item.ID" title="Xóa hội đồng">
+                                                    <!-- Link on demo.js: warning-message-and-confirmation-6 -->
+                                                    <i class="material-icons">close</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        dem++;
+                                    }
+                                </tbody>
+
+
+                            </table>
+                            Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount
+                            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, pageSize = Model.PageSize }))
+                        </div>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+    </div>
+</div>
+
+@section jsScript{
+
+    <script>
+        $(document).ready(function () {
+            //nếu không có thao tác gì thì ẩn đi
+            $('#AlertBox').removeClass('hide');
+
+            //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+            $('#AlertBox').delay(2000).slideUp(500);
+
+            $('.btnDelete').off('click').on('click', function () {
+                const notice = PNotify.notice({
+                    title: 'Thông báo',
+                    text: 'Bạn thật sự muốn xóa?',
+                    icon: 'fa fa-question-circle',
+                    width: '360px',
+                    minHeight: '110px',
+                    hide: false,
+                    closer: false,
+                    sticker: false,
+                    destroy: true,
+                    stack: new PNotify.Stack({
+                        dir1: 'down',
+                        modal: true,
+                        firstpos1: 25,
+                        overlayClose: false
+                    }),
+                    modules: new Map([
+                        ...PNotify.defaultModules,
+                        [PNotifyConfirm, {
+                            confirm: true
+                        }]
+                    ])
+                });
+
+                notice.on('pnotify:confirm', () =>
+                    $.ajax({
+                        data: { ID: $(this).data('id') },
+                        url: '/HoiDong/Delete',
+                        dataType: 'Json',
+                        type: 'POST',
+                        success: function (res) {
+                            if (res.status == true) {
+                                window.location.href = "/HoiDong";
+                                PNotify.success({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa hội đồng thành công.'
+                                });
+                            } else {
+                                PNotify.error({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa hội đồng KHÔNG thành công.'
+                                });
+                            }
+                        }
+                    })
+
+                );
+
+
+            });
+
+            $('.btnEdit').click(function (event) {
+                $('.editHoiDong').modal('show');
+                //alert($(this).data('id'));
+                var ID = $(this).data('id');
+                $.ajax({
+                    url: "/HoiDong/GetHoiDongByID/" + ID,
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (res) {
+                        $('#Edit_Name').val(res.HoiDong);
+                        $('#ID').val(res.ID);
+                    }
+                });
+            });
+        });
+    </script>
+
+}
+

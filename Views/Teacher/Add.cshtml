@@ -1,0 +1,330 @@
+﻿
+@using QLDoAn.Models.EF;
+@{
+    ViewBag.Title = "Thêm giáo viên";
+    ViewBag.Navbar = "Quản lý giáo viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var lstNganh = ViewBag.lstNganh as List<Tbl_ChuyenNganh>;
+}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+
+            @if (TempData["add_success"] != null)
+            {
+                <div class="alert alert-danger text-center" id="AlertBox">
+                    @TempData["add_success"]
+                </div>
+            }
+
+
+        </div>
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="blue">
+                        <i class="material-icons">add_circle_outline</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">
+                            Thêm giáo viên
+                        </h4>
+                        @using (Html.BeginForm("AddGiaoVien", "Teacher", FormMethod.Post, new { id = "frmAdd", enctype = "multipart/form-data" }))
+                        {
+                            <!-- Normal Information -->
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Mã giáo viên *</label>
+                                        <input type="text" name="MaGiaoVien" id="MaGiaoVien" class="form-control", required>
+                                        <span class="form-message"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Họ và tên *</label>
+                                        <input type="text" name="TenGiaoVien" id="TenGiaoVien" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group label-floating is-empty">
+                                        <label class="control-label">Email</label>
+                                        <input type="email" name="Email" id="Email" class="form-control" aria-invalid="false" placeholder="Email" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Điện thoại liên lạc</label>
+                                        <input type="number" name="SoDienThoai" id="SoDienThoai" class="form-control" required minLength="10">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Quê quán</label>
+                                        <input type="text" name="QueQuan" id="QueQuan" class="form-control" required>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row my-2 ml-4">
+                                <label class="col-sm-2 label-on-left">Giới tính</label>
+                                <div class="col-sm-10">
+                                    <div class="radio checkbox-inline">
+                                        <label>
+                                            <input type="radio" value="true" name="GioiTinh"
+                                                   checked="checked">Nam
+                                        </label>
+                                    </div>
+                                    <div class="radio checkbox-inline">
+                                        <label>
+                                            <input type="radio" value="false" name="GioiTinh">Nữ
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating is-empty">
+                                        <label class="label-control validateday" id="validateday">
+                                            Ngày sinh
+                                        </label>
+                                        <input type="text" class="form-control today birthday" id="ngaysinh" required name="NgaySinh" placeholder="Chọn ngày sinh" aria-invalid="false">
+                                        <span class="material-input"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 dropdown-label">
+                                    <p>Thuộc ngành:</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="selectpicker" name="ChuyenNganh_ID" id="ChuyenNganh_ID" data-style="btn btn-primary btn-round" required
+                                            title="Chọn ngành">
+                                        <option value="" disabled selected>Chọn ngành</option>
+                                        @foreach (var item in lstNganh)
+                                        {
+                                            <option value="@item.ID">@item.ChuyenNganh</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Hình ảnh</label>
+                                        <div class="fileinput fileinput-new text-center" data-provides="fileinput">
+                                            <div class="fileinput-new thumbnail img-circle">
+                                                <img src="~/Assets/img/default-avatar.png" alt="...">
+                                            </div>
+                                            <div class="fileinput-preview fileinput-exists thumbnail img-circle"></div>
+                                            <div>
+                                                <span class="btn btn-round btn-success btn-file">
+                                                    <span class="fileinput-new">Chọn ảnh</span>
+                                                    <span class="fileinput-exists">Chọn ảnh khác</span>
+                                                    <input type="file" name="HinhAnh" accept="image/*" required>
+                                                    <div class="ripple-container"></div>
+                                                </span>
+                                                <br>
+                                                <a href="#pablo" class="btn btn-danger btn-round fileinput-exists" data-dismiss="fileinput"><i class="fa fa-times"></i> Xoá</a>
+                                            </div>
+                                        </div>
+                                        @*<input type="file" name="HinhAnh" accept="image/*">*@
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Button -->
+                            <br>
+                            <div class="pull-right">
+                                <button type="reset" class="btn btn-default btn-fill">Đặt lại</button>
+
+                                <button type="submit" id="addGV" class="btn btn-success btn-fill">Tạo giáo viên</button>
+                                <div class="clearfix"></div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+    </div>
+
+</div>
+<script>
+    var btnADD = document.getElementById("addGV").onclick = function () {
+        // Bước 1: Lấy giá trị của username và password
+        var maGV = document.getElementById('MaGiaoVien').value;
+        var tenGV = document.getElementById('TenGiaoVien').value;
+        var Que = document.getElementById('QueQuan').value;
+        var ngaysinh = document.getElementById('ngaysinh').value;
+        var chuyennganh = document.getElementById('ChuyenNganh_ID').value;
+        var mail = document.getElementById('Email').value;
+
+
+
+
+        // Bước 2: Kiểm tra dữ liệu hợp lệ hay không
+        if (maGV.trim() == '' | tenGV.trim() == '' | Que.trim() == '' | ngaysinh.trim() == '' | chuyennganh.trim() == '' | mail.trim() == '') {
+          
+                alert('Bạn hãy nhập đầy đủ thông tin');
+        }
+
+        else {
+                     return true;
+        }
+
+        return false;
+
+    }
+
+</script>
+
+@section jsScript{
+
+    <script>
+        $(document).ready(function () {
+         
+
+
+
+
+
+
+
+
+
+            //nếu không có thao tác gì thì ẩn đi
+            $('#AlertBox').removeClass('hide');
+
+            //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+            $('#AlertBox').delay(4000).slideUp(500);
+            // add the rule here
+            $.validator.addMethod("select_validate", function (value, element, arg) {
+                return arg !== value;
+            }, "Value must not equal arg.");
+            jQuery.validator.addMethod("phonenu", function (value, element) {
+                if (/^(09[0-9]|07[0|6|7|8|9]|03[2-9]|08[1-5])+([0-9]{7})\b/g.test(value)) {
+                    return true;
+                } else {
+                    return false;
+                };
+            }, "Invalid phone number");
+
+            jQuery.validator.addMethod("email_regex", function (value, element) {
+                if (/^[a-z][a-z0-9_\.]{5,32}@@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$/g.test(value)) {
+                    return true;
+                } else {
+                    return false;
+                };
+            }, "Invalid email");
+            //   Khi bàn phím được nhấn và thả ra thì sẽ chạy phương thức này
+            $("#frmAdd").validate({
+                rules: {
+                    MaGiaoVien: "required",
+                    TenGiaoVien: "required",
+                    NgaySinh: "required",
+                    HinhAnh: "required",
+                    Email: {
+                        required: true,
+                        email_regex: true
+                    },
+                    SoDienThoai: {
+                        required: true,
+                        phonenu: true
+                    },
+                    QueQuan: "required",
+                    Lop_ID: { select_validate: "" },
+                    ChuyenNganh_ID: { select_validate: "" },
+                    HeDaoTao_ID: { select_validate: "" },
+                    NienKhoa_ID: { select_validate: "" },
+                },
+                messages: {
+                    MaGiaoVien: "Vui lòng nhập mã giáo viên",
+                    TenGiaoVien: "Vui lòng nhập tên giáo viên",
+                    NgaySinh: "Vui lòng nhập ngày giáo",
+                    HinhAnh: "Vui lòng chọn ảnh đại diện",
+                    Email: {
+                        required: "Vui lòng nhập email",
+                        email_regex: "Email không hợp lệ"
+                    },
+                    SoDienThoai: {
+                        required: "Vui lòng nhập số điện thoại",
+                        phonenu: "Số điện thoại không hợp lệ"
+                    },
+                    QueQuan: "Vui lòng nhập giá gốc",
+                    ChuyenNganh_ID: { select_validate: "Bạn chưa chọn chuyên ngành!" }
+                }
+            });
+        });
+    </script>
+
+
+
+
+
+    @*<script>
+                Validator({
+                    form: '#frmAdd',
+                    rules: Validator.isRequired("#MaGiaoVien")
+
+
+                });
+
+
+
+        //dối tượng validator
+                function Validator(options) {
+                    var formelement = document.querySelector(options.form)
+                    if (formelement) {
+
+                        options.rules.forEach(function (rule) {
+                            var inputElement = formelement.querySelector(rule.selector)
+                            var erorrelement = inputElement.parentElement.querySelector('.form-message');
+                            if (inputElement) {
+                                inputElement.onblur = function () {
+                                    var eror = rule.test(inputElement.value);
+                                    if (eror) {
+                                        eror.innerText = erorrelement;
+                                    }
+
+
+                                }
+                            }
+                        });
+
+                    }
+
+                }
+                    Validator.isRequired = function (selector) {
+                        return {
+                            selector: selector,
+                            test: function (value) {
+                                if (value == "") {
+                                    return "Vui lòng nhập trường này";
+                                }
+                                else {
+                                    return undefined;
+                                }
+
+                            }
+
+
+
+                        });
+                    }
+            </script>*@
+
+
+    <script>
+
+    </script>
+
+
+
+
+}
+

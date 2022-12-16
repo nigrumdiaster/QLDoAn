@@ -1,0 +1,321 @@
+﻿@using QLDoAn.Models.EF;
+@{
+    ViewBag.Title = "Thêm sinh viên";
+    ViewBag.Navbar = "Quản lý sinh viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var lstLop = ViewBag.lstLop as List<Tbl_Lop>;
+    var lstNganh = ViewBag.lstNganh as List<Tbl_ChuyenNganh>;
+    var lstHeDT = ViewBag.lstHeDT as List<Tbl_HeDaoTao>;
+    var lstNienKhoa = ViewBag.lstNienKhoa as List<Tbl_NienKhoa>;
+}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            @if (TempData["add_success"] != null)
+            {
+                <div class="alert alert-danger text-center " id="AlertBox">
+                    @TempData["add_success"]
+                </div>
+            }
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="blue">
+                        <i class="material-icons">add_circle_outline</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">
+                            Thêm sinh viên
+                        </h4>
+                        @using (Html.BeginForm("AddSinhVien", "SinhVien", FormMethod.Post, new { id = "frmAdd" }))
+                        {
+                            <!-- Normal Information -->
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Mã sinh viên *</label>
+                                        <input type="text" name="MaSinhVien" id="MaSinhVien" class="form-control"required >
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Họ và tên *</label>
+                                        <input type="text" name="TenSinhVien" id="TenSinhVien" class="form-control" required>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-4">
+                                    <div class="form-group label-floating is-empty">
+                                        <label class="control-label">Email</label>
+                                        <input type="email" name="Email" class="form-control" id="Email" aria-invalid="false" placeholder="Email" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Điện thoại liên lạc</label>
+                                        <input type="number" name="SoDienThoai" class="form-control" minLength="10" required id="SoDienThoai">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Quê quán</label>
+                                        <input type="text" name="QueQuan" id="QueQuan" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row my-2 ml-4">
+                                <label class="col-sm-2 label-on-left">Giới tính</label>
+                                <div class="col-sm-10">
+                                    <div class="radio checkbox-inline">
+                                        <label>
+                                            <input type="radio" value="true" name="GioiTinh"
+                                                   checked="checked">Nam
+                                        </label>
+                                    </div>
+                                    <div class="radio checkbox-inline">
+                                        <label>
+                                            <input type="radio" value="false" name="GioiTinh">Nữ
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group label-floating is-empty">
+                                        <label class="label-control validateday" id="validateday">
+                                            Ngày sinh
+                                        </label>
+                                        <input type="text" class="form-control today birthday" id="NgaySinh" required name="NgaySinh" placeholder="Chọn ngày sinh" aria-invalid="false">
+                                        <span class="material-input"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                
+                                <div class="col-md-12">
+                                    <div class="col-md-2 dropdown-label">
+                                        <p>Lớp:</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="selectpicker" name="Lop_ID" id="sel_Lop" data-style="btn btn-primary btn-round" required
+                                                title="Chọn ngành">
+                                            <option value="" disabled selected>Chọn lớp</option>
+                                            @foreach (var item in lstLop)
+                                            {
+                                                <option value="@item.ID">@item.TenLop</option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-2 dropdown-label">
+                                        <p>Thuộc ngành:</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="selectpicker" name="ChuyenNganh_ID" id="sel_ChuyenNganh" data-style="btn btn-primary btn-round" required
+                                                title="Chọn ngành">
+                                            <option value="" disabled selected>Chọn ngành</option>
+                                            @*@foreach (var item in lstNganh)
+                                            {
+                                                <option value="@item.ID">@item.ChuyenNganh</option>
+                                            }*@
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="col-md-2 dropdown-label">
+                                        <p>Hệ đào tạo:</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="selectpicker" name="HeDaoTao_ID" id="sel_HeDaoTao" data-style="btn btn-primary btn-round" required
+                                                title="Chọn hệ đào tạo">
+                                            <option value="" disabled selected>Chọn hệ đào tạo</option>
+                                            @*@foreach (var item in lstHeDT)
+                                            {
+                                                <option value="@item.ID">@item.TenHe</option>
+                                            }*@
+                                        </select>
+                                    </div>
+
+                                    @*<div class="col-md-2 dropdown-label">
+                                        <p>Niên khóa:</p>
+                                    </div>*@
+                                    @*<div class="col-md-3">
+                                        <select class="selectpicker" name="NienKhoa_ID" data-style="btn btn-primary btn-round" required id="NienKhoa_ID"
+                                                title="Chọn niên khóa">
+                                            <option value="" disabled selected>Chọn niên khóa</option>
+                                            @foreach (var item in lstNienKhoa)
+                                            {
+                                                <option value="@item.ID">@item.NienKhoa</option>
+                                            }
+                                        </select>
+                                    </div>*@
+                                </div>
+                            </div>
+
+                            <!-- Button -->
+                            <br>
+                            <div class="pull-right">
+                                <button type="reset" class="btn btn-default btn-fill">Đặt lại</button>
+
+                                <button type="submit" id="btnAdd" class="btn btn-success btn-fill">Tạo sinh viên</button>
+                                <div class="clearfix"></div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+    </div>
+
+</div>
+
+<script>
+    var btnADD = document.getElementById("btnAdd").onclick = function () {
+        // Bước 1: Lấy giá trị của username và password
+
+        var MaSinhVien = document.getElementById('MaSinhVien').value;
+        var TenSinhVien = document.getElementById('TenSinhVien').value;
+        var Email = document.getElementById('Email').value;
+        var SoDienThoai = document.getElementById('SoDienThoai').value;
+        var QueQuan = document.getElementById('QueQuan').value;
+        var NgaySinh = document.getElementById('NgaySinh').value;
+        var sel_Lop = document.getElementById('sel_Lop').value;
+       
+
+
+
+
+
+        // Bước 2: Kiểm tra dữ liệu hợp lệ hay không
+        if (MaSinhVien.trim() == '' | TenSinhVien.trim() == '' | Email.trim() == '' | SoDienThoai.trim() == '' | QueQuan.trim() == ''
+
+            | NgaySinh.trim() == '' | sel_Lop.trim() == '' 
+
+
+        ) {
+
+            alert('Bạn hãy nhập đầy đủ thông tin');
+        }
+
+        else {
+            return true;
+        }
+
+        return false;
+
+    }
+
+
+
+</script>
+
+
+
+@section jsScript{
+
+    <script>
+        $(document).ready(function () {
+         
+                //nếu không có thao tác gì thì ẩn đi
+                $('#AlertBox').removeClass('hide');
+
+                //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+                $('#AlertBox').delay(2000).slideUp(500);
+
+            // add the rule here
+            $.validator.addMethod("select_validate", function (value, element, arg) {
+                return arg !== value;
+            }, "Value must not equal arg.");
+
+            jQuery.validator.addMethod("phonenu", function (value, element) {
+                if (/^(09[0-9]|07[0|6|7|8|9]|03[2-9]|08[1-5])+([0-9]{7})\b/g.test(value)) {
+                    return true;
+                } else {
+                    return false;
+                };
+             }, "Invalid phone number");
+
+            jQuery.validator.addMethod("email_regex", function (value, element) {
+                if (/^[a-z][a-z0-9_\.]{5,32}@@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$/g.test(value)) {
+                    return true;
+                } else {
+                    return false;
+                };
+            }, "Invalid email");
+
+            //Khi bàn phím được nhấn và thả ra thì sẽ chạy phương thức này
+            $("#frmAdd").validate({
+                rules: {
+                    MaSinhVien: "required",
+                    TenSinhVien: "required",
+                    NgaySinh: "required",
+                    Email: {
+                        required: true,
+                        email_regex: true
+                    },
+                    SoDienThoai: {
+                        required: true,
+                        phonenu: true
+                    },
+                    QueQuan: "required",
+                    Lop_ID: { select_validate: "" },
+                    ChuyenNganh_ID: { select_validate: "" },
+                    HeDaoTao_ID: { select_validate: "" },
+                    NienKhoa_ID: { select_validate: "" },
+                },
+                messages: {
+                    MaSinhVien: "Vui lòng nhập mã sinh viên",
+                    TenSinhVien: "Vui lòng nhập tên sinh viên",
+                    NgaySinh: "Vui lòng nhập ngày sinh",
+                    Email: {
+                        required: "Vui lòng nhập email",
+                        email_regex: "Email không hợp lệ"
+                    },
+                    SoDienThoai: {
+                        required: "Vui lòng nhập số điện thoại",
+                        phonenu: "Số điện thoại không hợp lệ"
+                    },
+                    QueQuan: "Vui lòng nhập giá gốc",
+                    Lop_ID:{ select_validate: "Bạn chưa chọn lớp!" },
+                    ChuyenNganh_ID:{ select_validate: "Bạn chưa chọn chuyên ngành!" },
+                    HeDaoTao_ID:{ select_validate: "Bạn chưa chọn hệ đào tạo!" },
+                    NienKhoa_ID: { select_validate: "Bạn chưa chọn niên khóa!" }
+                }
+            });
+
+            $("#sel_Lop").change(function () {
+                var ID = this.value;
+                $.ajax({
+                    url: '/SinhVien/GetChuyenNganhByLop/' + ID,
+                    type: 'get',
+                    dataType: 'json',
+                    contentType: "application/json;charset=utf-8",
+                    success: function (response) {
+                        var chuyennganh = "<option value='" + response[0].ChuyenNganh_ID + "' selected>" + response[0].ChuyenNganh + "</option>";
+                        $("#sel_ChuyenNganh").append(chuyennganh);
+                        $("Button[data-id='sel_ChuyenNganh']").empty();
+                        $("Button[data-id='sel_ChuyenNganh']").append('<span class="filter-option pull-left">'+ response[0].ChuyenNganh +'</span>');
+
+                        var hedt = "<option value='" + response[0].HeDaoTao_ID + "' selected>" + response[0].TenHe + "</option>";
+                        $("#sel_HeDaoTao").append(hedt);
+                        $("Button[data-id='sel_HeDaoTao']").empty();
+                        $("Button[data-id='sel_HeDaoTao']").append('<span class="filter-option pull-left">' + response[0].TenHe + '</span>');
+                        
+                        console.log(response);
+                    }
+                });
+            });
+        });
+    </script>
+
+}

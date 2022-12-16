@@ -1,0 +1,335 @@
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<QLDoAn.Models.EF.Tbl_Khoa>
+
+@{
+    ViewBag.Title = "Quản lý khoa";
+    ViewBag.Navbar = "Quản lý khoa";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int dem = 1;
+}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            @if (TempData["add_success1"] != null)
+            {
+                <div class="alert alert-danger text-center" id="AlertBox">
+                    @TempData["add_success1"]
+                </div>
+            }
+            else if (@TempData["add_success"] != null)
+            {
+                <div class="alert alert-success text-center" id="AlertBox">
+                    @TempData["add_success"]
+                </div>
+
+
+            }
+            else
+            {
+
+
+            }
+        </div>
+        <div class="row">
+            <div class="col-md-4" style="margin-bottom: 10px">
+                <button class="btn btn-lg btn-primary" data-toggle="modal" data-target="#addNew">Thêm mới </button>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Thêm mới khoa</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @using (Html.BeginForm("Add", "Khoa", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Tên khoa:</label>
+                                <input type="text" name="TenKhoa" class="form-control" id="TenKhoa1">
+                            </div>
+                            @*<div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Mã khoa:</label>
+                                <input type="text" name="MaKhoa" id="MaKhoa1" class="form-control">
+                            </div>*@
+                            <div class="form-group">
+                                <button type="submit" id="btnAdd" class="btn btn-primary btn-lg">Thêm mới</button>
+                            </div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="blue">
+                        <i class="material-icons">list_alt</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">Danh sách khoa</h4>
+                        <div class="toolbar">
+                            <!--        Here you can write extra buttons/actions for the toolbar              -->
+                        </div>
+                        <div class="material-datatables">
+
+                            <table id="datatables2"
+                                   class="table table-striped display responsive table-no-bordered table-hover nowrap"
+                                   style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên khoa</th>
+                                        @*<th>Mã khoa</th>*@
+                                        <th class="disabled-sorting"></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@dem</td>
+                                            <td>@item.TenKhoa</td>
+                                            @*<td>@item.MaKhoa</td>*@
+                                            <td class="td-actions">
+                                                <button type="button" rel="tooltip"  data-id="@item.ID"
+                                                        class="btn btn-success btn-round btnEdit">
+                                                    <i class="material-icons">edit</i>
+                                                </button>
+                                                <button type="button" rel="tooltip"
+                                                        class="btn btn-danger btn-round btnDelete" data-id="@item.ID" title="Xóa khoa">
+                                                    <!-- Link on demo.js: warning-message-and-confirmation-6 -->
+                                                    <i class="material-icons">close</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        dem++;
+                                    }
+                                </tbody>
+
+
+                            </table>
+                            Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount
+                            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, pageSize = Model.PageSize }))
+                        </div>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade editNienKhoa" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Sửa khoa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("Edit", "Khoa", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <input type="hidden" name="ID" id="ID" />
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Tên khoa:</label>
+                        <input type="text" name="TenKhoa" id="TenKhoa" class="form-control">
+                    </div>
+                    @*<div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Mã khoa:</label>
+                        <input type="text" name="MaKhoa" id="MaKhoa" class="form-control">
+                    </div>*@
+                    <div class="form-group">
+                        <button type="submit" id="btnEdit" class="btn btn-primary">Sửa</button>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var btnAdd = document.getElementById("btnAdd").onclick = function () {
+        // Bước 1: Lấy giá trị của username và password
+
+        var TenKhoa1 = document.getElementById('TenKhoa1').value;
+      /*  var MaKhoa1 = document.getElementById('MaKhoa1').value;*/
+     /*   var Khoa_ID1 = document.getElementById('Khoa_ID1').value;*/
+        //var ChuyenNganh_ID = document.getElementById('ChuyenNganh_ID').value;
+        //var ChuyenNganh_ID_SVTH = document.getElementById('ChuyenNganh_ID_SVTH').value;
+        //var Lop_ID_SVTH = document.getElementById('Lop_ID_SVTH').value;
+        //var SinhVien_ID_SVTH = document.getElementById('SinhVien_ID_SVTH').value;
+        //var NamBaoVe_ID = document.getElementById('NamBaoVe_ID').value;
+        //var Diem_ID = document.getElementById('Diem_ID').value;
+        //var HDCham_ID = document.getElementById('HDCham_ID').value;
+
+
+
+
+
+        // Bước 2: Kiểm tra dữ liệu hợp lệ hay không
+        if (TenKhoa1.trim() == '' /*| MaKhoa1.trim() == ''*/
+
+
+        ) {
+
+            alert('Bạn hãy nhập đầy đủ thông tin');
+        }
+
+        else {
+            return true;
+        }
+
+        return false;
+
+    }
+
+
+
+
+    var btnEdit = document.getElementById("btnEdit").onclick = function () {
+        // Bước 1: Lấy giá trị của username và password
+
+        var TenKhoa = document.getElementById('TenKhoa').value;
+    /*    var MaKhoa = document.getElementById('MaKhoa').value;*/
+        /*   var Khoa_ID1 = document.getElementById('Khoa_ID1').value;*/
+        //var ChuyenNganh_ID = document.getElementById('ChuyenNganh_ID').value;
+        //var ChuyenNganh_ID_SVTH = document.getElementById('ChuyenNganh_ID_SVTH').value;
+        //var Lop_ID_SVTH = document.getElementById('Lop_ID_SVTH').value;
+        //var SinhVien_ID_SVTH = document.getElementById('SinhVien_ID_SVTH').value;
+        //var NamBaoVe_ID = document.getElementById('NamBaoVe_ID').value;
+        //var Diem_ID = document.getElementById('Diem_ID').value;
+        //var HDCham_ID = document.getElementById('HDCham_ID').value;
+
+
+
+
+
+        // Bước 2: Kiểm tra dữ liệu hợp lệ hay không
+        if (TenKhoa.trim() == ''/* | MaKhoa.trim() == ''*/
+
+
+        ) {
+
+            alert('Bạn hãy nhập đầy đủ thông tin');
+        }
+
+        else {
+            return true;
+        }
+
+        return false;
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+@section jsScript{
+
+    <script>
+        $(document).ready(function () {
+            //nếu không có thao tác gì thì ẩn đi
+            $('#AlertBox').removeClass('hide');
+
+            //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+            $('#AlertBox').delay(2000).slideUp(500);
+
+            $('.btnDelete').off('click').on('click', function () {
+                const notice = PNotify.notice({
+                    title: 'Thông báo',
+                    text: 'Bạn thật sự muốn xóa?',
+                    icon: 'fa fa-question-circle',
+                    width: '360px',
+                    minHeight: '110px',
+                    hide: false,
+                    closer: false,
+                    sticker: false,
+                    destroy: true,
+                    stack: new PNotify.Stack({
+                        dir1: 'down',
+                        modal: true,
+                        firstpos1: 25,
+                        overlayClose: false
+                    }),
+                    modules: new Map([
+                        ...PNotify.defaultModules,
+                        [PNotifyConfirm, {
+                            confirm: true
+                        }]
+                    ])
+                });
+
+                notice.on('pnotify:confirm', () =>
+                    $.ajax({
+                        data: { ID: $(this).data('id') },
+                        url: '/Khoa/Delete',
+                        dataType: 'Json',
+                        type: 'POST',
+                        success: function (res) {
+                            if (res.status == true) {
+                                window.location.href = "/Khoa";
+                                PNotify.success({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa khoa thành công.'
+                                });
+                            } else {
+                                PNotify.error({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa khoa KHÔNG thành công.'
+                                });
+                            }
+                        }
+                    })
+
+                );
+
+
+            });
+
+            $('.btnEdit').click(function (event) {
+                $('.editNienKhoa').modal('show');
+                //alert($(this).data('id'));
+                var ID = $(this).data('id');
+                $.ajax({
+                    url: "/Khoa/GetByID/" + ID,
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (res) {
+                        $('#TenKhoa').val(res.TenKhoa);
+                       $('#MaKhoa').val(res.MaKhoa);
+                        $('#ID').val(res.ID);
+                    }
+                });
+            });
+        });
+    </script>
+
+}
+

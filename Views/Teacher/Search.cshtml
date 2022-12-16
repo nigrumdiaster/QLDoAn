@@ -1,0 +1,234 @@
+﻿
+@using PagedList.Mvc
+@model PagedList.IPagedList<QLDoAn.Models.EF.Tbl_GiaoVien>
+
+@{
+    ViewBag.Title = "Danh sách giáo viên";
+    ViewBag.Navbar = "Kết quả tìm kiếm với tên giáo viên : "+ ViewBag.TenGiaoVien;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int dem = 1;
+    var tengiaovien = ViewBag.TenGiaoVien;
+
+}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            @if (TempData["add_success"] != null)
+            {
+                <div class="alert alert-success text-center" id="AlertBox">
+                    @TempData["add_success"]
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="blue">
+                        <i class="material-icons">search</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">
+                            Tìm kiếm giáo viên
+                        </h4>
+                        <form action="/Teacher/Search" method="get">
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-4">
+                                        <div class="form-group label-floating">
+                                            <label class="control-label">Tên Giáo Viên : </label>
+                                            <input type="text" class="form-control" name="TenGiaoVien" id="TenGiaoVien" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-success btn-fill" id="btn_SearchDoAn">Tìm kiếm</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    <!--<div class="card-header card-header-icon" data-background-color="blue">
+                        <i class="material-icons">search</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">
+                            Tìm kiếm lớp
+                        </h4>
+                        <form action="/Lop/Search" method="get">-->
+                    <!-- Normal Information -->
+                    <!--<div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-4">
+                                        <div class="form-group label-floating">
+                                            <label class="control-label">Tên lớp</label>
+                                            <input type="text" class="form-control" name="TenLop" id="TenLop" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-success btn-fill" id="btn_SearchDoAn">Tìm kiếm</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>-->
+
+                    <div class="card-header card-header-icon" data-background-color="blue">
+                        <i class="material-icons">list_alt</i>
+                    </div>
+
+                    <div class="card-content">
+                        <h4 class="card-title">Danh sách giáo viên</h4>
+                        <div class="toolbar">
+                            <!--        Here you can write extra buttons/actions for the toolbar              -->
+                        </div>
+                        <div class="material-datatables">
+
+                            <table id="datatables2"
+                                   class="table table-striped display responsive table-no-bordered table-hover nowrap"
+                                   style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Hình ảnh</th>
+                                        <th>Tên giáo viên</th>
+                                        <th>Mã giáo viên</th>
+                                        <th>Thông tin</th>
+                                        <th>Chuyên ngành</th>
+                                        <th class="disabled-sorting"></th>
+                                    </tr>
+                                </thead>
+
+                                <!-- Footer enable filter -->
+                                @*<tfoot style="display: contents">
+                                        <tr>
+                                            <th class="table-hidden"></th>
+                                            <th class="table-hidden"></th>
+                                            <th class="table-hidden"></th>
+                                            <th class="table-hidden"></th>
+                                            <th>Ngành</th>
+                                            <th class="disabled-sorting table-hidden"></th>
+                                        </tr>
+                                    </tfoot>*@
+
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@dem</td>
+                                            <td>
+                                                <img src="~/Assets/img/teacher/@item.HinhAnh" style="max-height:100px; width: 100px" />
+                                            </td>
+                                            <td>@item.TenGiaoVien</td>
+                                            <td>@item.MaGiaoVien</td>
+                                            <td>
+                                                <p>Ngày sinh: <span style="color:blue">@item.NgaySinh.Value.ToString("dd/MM/yyyy")</span></p>
+                                                <p>Giới tính: <span style="color:blue">@(item.GioiTinh == true ? "Nam" : "Nữ")</span></p>
+                                                <p>Email: <span style="color:blue">@item.Email</span></p>
+                                                <p>Quê quán: <span style="color:blue">@item.QueQuan</span></p>
+                                                <p>SĐT: <span style="color:blue">@item.SoDienThoai</span></p>
+                                            </td>
+                                            <td>@item.Tbl_ChuyenNganh.ChuyenNganh</td>
+                                            <td class="td-actions">
+                                                <button type="button" rel="tooltip"
+                                                        class="btn btn-success btn-round">
+                                                    <a href="/Teacher/Edit/@item.ID">
+                                                        <i class="material-icons">edit</i>
+                                                    </a>
+                                                </button>
+                                                <button type="button" rel="tooltip"
+                                                        class="btn btn-danger btn-round btnDelete" data-id="@item.ID" title="Xóa sản phẩm">
+                                                    <!-- Link on demo.js: warning-message-and-confirmation-6 -->
+                                                    <i class="material-icons">close</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+
+                            </table>
+                            Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount
+                            @Html.PagedListPager(Model, page => Url.Action("Search", new { TenGiaoVien = (ViewBag.TenGiaoVien != "" ? ViewBag.TenGiaoVien : ""), page, pageSize = Model.PageSize }))
+                        </div>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+    </div>
+</div>
+
+
+@section jsScript{
+
+    <script>
+        $(document).ready(function () {
+            //nếu không có thao tác gì thì ẩn đi
+            $('#AlertBox').removeClass('hide');
+
+            //Sau khi hiển thị lên thì delay 1s và cuộn lên trên sử dụng slideup
+            $('#AlertBox').delay(2000).slideUp(500);
+
+            $('.btnDelete').off('click').on('click', function () {
+                const notice = PNotify.notice({
+                    title: 'Thông báo',
+                    text: 'Bạn thật sự muốn xóa?',
+                    icon: 'fa fa-question-circle',
+                    width: '360px',
+                    minHeight: '110px',
+                    hide: false,
+                    closer: false,
+                    sticker: false,
+                    destroy: true,
+                    stack: new PNotify.Stack({
+                        dir1: 'down',
+                        modal: true,
+                        firstpos1: 25,
+                        overlayClose: false
+                    }),
+                    modules: new Map([
+                        ...PNotify.defaultModules,
+                        [PNotifyConfirm, {
+                            confirm: true
+                        }]
+                    ])
+                });
+
+                notice.on('pnotify:confirm', () =>
+                    $.ajax({
+                        data: { ID: $(this).data('id') },
+                        url: '/Teacher/Delete',
+                        dataType: 'Json',
+                        type: 'POST',
+                        success: function (res) {
+                            if (res.status == true) {
+                                window.location.href = "/Teacher";
+                                PNotify.success({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa giáo viên thành công.'
+                                });
+                            } else {
+                                PNotify.error({
+                                    title: 'THÔNG BÁO!!',
+                                    text: 'Xóa giáo viên KHÔNG thành công.'
+                                });
+                            }
+                        }
+                    })
+
+                );
+
+
+            });
+
+        });
+    </script>
+
+}
+

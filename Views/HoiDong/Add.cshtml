@@ -1,0 +1,259 @@
+﻿
+@using QLDoAn.Models.EF;
+@{
+    ViewBag.Title = "Thêm hội đồng";
+    ViewBag.Navbar = "Quản lý hội đồng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var lstKhoa = ViewBag.Khoa as List<Tbl_Khoa>;
+    var session_gv = Session["add_gv"] as List<Tbl_GiaoVien>;
+    int dem = 1;
+}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="blue">
+                        <i class="material-icons">add_circle_outline</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">
+                            Thêm giáo viên trong hội đồng
+                        </h4>
+                        <!-- Normal Information -->
+                        
+                        <div class="row">
+                            <div class="col-md-2 dropdown-label">
+                                <p>Thuộc khoa:</p>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control" name="Khoa_ID" data-style="btn btn-primary btn-round" required
+                                        title="Chọn khoa">
+                                    <option value="" disabled selected>Chọn khoa</option>
+                                    @foreach (var item in lstKhoa)
+                                    {
+                                        <option value="@item.ID">@item.TenKhoa</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-2 dropdown-label">
+                                <p>Thuộc ngành:</p>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control" name="ChuyenNganh_ID" data-style="btn btn-primary btn-round" required
+                                        title="Chọn ngành">
+                                    <option value="" disabled selected>Chọn ngành</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 dropdown-label">
+                                <p>Chọn giáo viên:</p>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control" name="GiaoVien_ID" data-style="btn btn-primary btn-round" required
+                                        title="Chọn giáo viên">
+                                    <option value="" disabled selected>Chọn giáo viên</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" id="add_GV" class="btn btn-success btn-fill">Thêm giáo viên</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="blue">
+                        <i class="material-icons">list_alt</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">Danh sách giáo viên trong hội đồng</h4>
+                        <div class="toolbar">
+                            <!--        Here you can write extra buttons/actions for the toolbar              -->
+                        </div>
+                        <div class="material-datatables">
+
+                            <table id="datatables2"
+                                   class="table table-striped display responsive table-no-bordered table-hover nowrap"
+                                   style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Họ tên giáo viên</th>
+                                        <th class="disabled-sorting"></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @if (session_gv != null)
+                                    {
+                                        
+                                        foreach (var item in session_gv)
+                                        {
+                                            <tr>
+                                                <td>@dem</td>
+                                                <td>@item.TenGiaoVien</td>
+                                                <td class="td-actions">
+                                                    <button type="button" rel="tooltip"
+                                                            class="btn btn-danger btn-round btnDelete" data-id="@item.ID" title="Xóa giáo viên">
+                                                        <!-- Link on demo.js: warning-message-and-confirmation-6 -->
+                                                        <i class="material-icons">close</i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            dem++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-content">
+                        @using (Html.BeginForm("addHoiDong", "HoiDong", FormMethod.Post, new { id = "frmAdd" }))
+                        {
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group label-floating">
+                                        <label class="control-label">Tên hội đồng *</label>
+                                        <input type="text" name="TenHoiDong" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="pull-right">
+                                <button type="submit" class="btn btn-success btn-fill">Tạo hội đồng chấm</button>
+                                <div class="clearfix"></div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+
+    </div>
+
+</div>
+
+@section jsScript{
+
+    <script>
+        $(document).ready(function () {
+            $('select[name="Khoa_ID"]').change(function () {
+                var ID = this.value;
+                $.ajax({
+                    url: '/DoAn/GetChuyenNganhByKhoa/' + ID,
+                    type: 'get',
+                    dataType: 'json',
+                    contentType: "application/json;charset=utf-8",
+                    success: function (response) {
+                        $('select[name="ChuyenNganh_ID"]').empty();
+                        var def = "<option disabled selected>Chọn chuyên ngành</option>";
+                        $('select[name="ChuyenNganh_ID"]').append(def);
+                        $.each(response, function (i, item) {
+                            var option = "<option value='" + response[i].ID + "'>" + response[i].ChuyenNganh + "</option>";
+
+                            $('select[name="ChuyenNganh_ID"]').append(option);
+                        });
+                        console.log(response)
+
+                    }
+                });
+            });
+
+            $('select[name="ChuyenNganh_ID"]').change(function () {
+                var ID = this.value;
+                $.ajax({
+                    url: '/DoAn/GetGVByChuyenNganh/' + ID,
+                    type: 'get',
+                    dataType: 'json',
+                    contentType: "application/json;charset=utf-8",
+                    success: function (response) {
+                        $('select[name="GiaoVien_ID"]').empty();
+                        var def = "<option disabled selected>Chọn giáo viên</option>";
+                        $('select[name="GiaoVien_ID"]').append(def);
+                        $.each(response, function (i, item) {
+                            var option = "<option value='" + response[i].ID + "'>" + response[i].TenGiaoVien + "</option>";
+
+                            $('select[name="GiaoVien_ID"]').append(option);
+                        });
+
+                    }
+                });
+            });
+
+            $("#add_GV").click(function () {
+                var ID = $('select[name="GiaoVien_ID"]').val();
+                $.ajax({
+                    url: '/HoiDong/addGV',
+                    data: {
+                        ID: ID
+                    },
+                    dataType: 'Json',
+                    type: 'POST',
+                    success: function (res) {
+                        if (res.status == true) {
+                            window.location.href = "/HoiDong/Add";
+                            PNotify.success({
+                                title: 'THÔNG BÁO!!',
+                                text: 'Thêm giáo viên thành công.'
+                            });
+                        } else {
+                            PNotify.error({
+                                title: 'THÔNG BÁO!!',
+                                text: 'Thêm giáo viên KHÔNG thành công hoặc giáo viên đã được thêm vào hội đồng.'
+                            });
+                        }
+                    }
+                });
+            });
+
+            $('.btnDelete').off('click').on('click', function () {
+
+                $.ajax({
+                    data: { ID: $(this).data('id') },
+                    url: '/HoiDong/Delete_GV',
+                    dataType: 'Json',
+                    type: 'POST',
+                    success: function (res) {
+                        if (res.status == true) {
+                            window.location.href = "/HoiDong/Add";
+                            PNotify.success({
+                                title: 'THÔNG BÁO!!',
+                                text: 'Xóa giáo viên thành công.'
+                            });
+                        } else {
+                            PNotify.error({
+                                title: 'THÔNG BÁO!!',
+                                text: 'Xóa giáo viên KHÔNG thành công.'
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
+}
+
